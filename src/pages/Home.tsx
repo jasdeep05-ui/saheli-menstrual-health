@@ -234,6 +234,7 @@ function LatestSymptomPreview({ entry }: { entry: SymptomEntry }) {
 function PeriodQuickLog({ open, onClose, onSave }: { open: boolean; onClose: () => void; onSave: () => void }) {
   const { t } = useApp();
   const [startDate, setStartDate] = useState(format(new Date(), 'yyyy-MM-dd'));
+  const [endDate, setEndDate] = useState('');
   const [flow, setFlow] = useState<FlowIntensity>('medium');
   const [notes, setNotes] = useState('');
 
@@ -241,6 +242,7 @@ function PeriodQuickLog({ open, onClose, onSave }: { open: boolean; onClose: () 
     const entry = {
       id: crypto.randomUUID(),
       startDate,
+      endDate: endDate || undefined,
       flow,
       notes: notes || undefined,
       createdAt: new Date().toISOString(),
@@ -249,6 +251,7 @@ function PeriodQuickLog({ open, onClose, onSave }: { open: boolean; onClose: () 
     storage.addPeriod(entry);
     setNotes('');
     setStartDate(format(new Date(), 'yyyy-MM-dd'));
+    setEndDate('');
     setFlow('medium');
     onSave();
   };
@@ -263,6 +266,17 @@ function PeriodQuickLog({ open, onClose, onSave }: { open: boolean; onClose: () 
             value={startDate}
             onChange={e => setStartDate(e.target.value)}
             className="input-field"
+            max={format(new Date(), 'yyyy-MM-dd')}
+          />
+        </div>
+        <div>
+          <label className="mb-1.5 block text-sm font-medium text-plum-600">{t('trackEndDate')}</label>
+          <input
+            type="date"
+            value={endDate}
+            onChange={e => setEndDate(e.target.value)}
+            className="input-field"
+            min={startDate}
             max={format(new Date(), 'yyyy-MM-dd')}
           />
         </div>
