@@ -1,4 +1,4 @@
-// Saheli logo — abstract floral/supportive-circle symbol
+// Saheli logo — illustrated girl with delicate floral details
 
 interface LogoProps {
   size?: number;
@@ -16,19 +16,54 @@ export function SaheliLogo({ size = 40, className = '' }: LogoProps) {
       role="img"
       aria-label="Saheli"
     >
-      {/* Outer supportive circle */}
-      <circle cx="24" cy="24" r="22" stroke="#FF8B73" strokeWidth="2" opacity="0.3" />
-      {/* Petal arrangement */}
-      <g transform="translate(24 24)">
-        <ellipse cx="0" cy="-10" rx="5" ry="9" fill="#FFB3A4" opacity="0.8" />
-        <ellipse cx="0" cy="-10" rx="5" ry="9" fill="#FFB3A4" opacity="0.8" transform="rotate(60)" />
-        <ellipse cx="0" cy="-10" rx="5" ry="9" fill="#F3A8B8" opacity="0.7" transform="rotate(120)" />
-        <ellipse cx="0" cy="-10" rx="5" ry="9" fill="#F3A8B8" opacity="0.7" transform="rotate(180)" />
-        <ellipse cx="0" cy="-10" rx="5" ry="9" fill="#C4B5E3" opacity="0.6" transform="rotate(240)" />
-        <ellipse cx="0" cy="-10" rx="5" ry="9" fill="#C4B5E3" opacity="0.6" transform="rotate(300)" />
-        {/* Center */}
-        <circle cx="0" cy="0" r="4" fill="#E85538" />
+      {/* Hair back */}
+      <path d="M14 18c0-6 4.5-11 10-11s10 5 10 11c0 3-1 6-2.5 8H16.5C15 24 14 21 14 18z" fill="#4A2C5A" opacity="0.15" />
+      <path d="M13 16c0-6 4.5-11 11-11s11 5 11 11c0 4-1.5 7-3.5 9H16.5C14.5 23 13 20 13 16z" fill="#4A2C5A" opacity="0.85" />
+
+      {/* Face */}
+      <ellipse cx="24" cy="22" rx="8" ry="9" fill="#FFDEB2" />
+
+      {/* Hair front bangs */}
+      <path d="M16 18c0-5 3.5-8 8-8s8 3 8 8c0-1-2-2.5-4-2.5c-1.5 0-2.5.5-4 .5s-2.5-.5-4-.5c-2 0-4 1.5-4 2.5z" fill="#4A2C5A" />
+      <path d="M15 17c0-5 4-9 9-9s9 4 9 9c0 1.5-1 3-2 4 0-2-1.5-5.5-4-6-1 1-2 1.5-3 1.5s-2-.5-3-1.5c-2.5.5-4 4-4 6-1-1-2-2.5-2-4z" fill="#4A2C5A" />
+
+      {/* Side hair strands */}
+      <path d="M15 20c-.5 3-.5 6 0 9 0 1 .5 2 1 2.5-1-1.5-1-3.5-1-5.5 0-2 .5-4 0-6z" fill="#4A2C5A" opacity="0.7" />
+      <path d="M33 20c.5 3 .5 6 0 9 0 1-.5 2-1 2.5 1-1.5 1-3.5 1-5.5 0-2-.5-4 0-6z" fill="#4A2C5A" opacity="0.7" />
+
+      {/* Eyes */}
+      <circle cx="20.5" cy="22" r="1.1" fill="#4A2C5A" />
+      <circle cx="27.5" cy="22" r="1.1" fill="#4A2C5A" />
+
+      {/* Cheeks */}
+      <circle cx="19" cy="25" r="1.8" fill="#FFB6C1" opacity="0.5" />
+      <circle cx="29" cy="25" r="1.8" fill="#FFB6C1" opacity="0.5" />
+
+      {/* Smile */}
+      <path d="M22 26.5c.8.8 3.2.8 4 0" stroke="#4A2C5A" stroke-width="1" stroke-linecap="round" fill="none" />
+
+      {/* Flower in hair — left side */}
+      <g transform="translate(16.5 13)">
+        <circle cx="0" cy="0" r="1.8" fill="#FFB6C1" />
+        <ellipse cx="0" cy="-2.2" rx="1.2" ry="2" fill="#FFB6C1" opacity="0.8" />
+        <ellipse cx="0" cy="2.2" rx="1.2" ry="2" fill="#FFB6C1" opacity="0.8" />
+        <ellipse cx="-2.2" cy="0" rx="2" ry="1.2" fill="#FFB6C1" opacity="0.8" />
+        <ellipse cx="2.2" cy="0" rx="2" ry="1.2" fill="#FFB6C1" opacity="0.8" />
+        <circle cx="0" cy="0" r="0.9" fill="#FFDEB2" />
       </g>
+
+      {/* Flower in hair — right side */}
+      <g transform="translate(31 12.5)">
+        <circle cx="0" cy="0" r="1.5" fill="#E8D8FF" />
+        <ellipse cx="0" cy="-1.8" rx="1" ry="1.7" fill="#E8D8FF" opacity="0.8" />
+        <ellipse cx="0" cy="1.8" rx="1" ry="1.7" fill="#E8D8FF" opacity="0.8" />
+        <ellipse cx="-1.8" cy="0" rx="1.7" ry="1" fill="#E8D8FF" opacity="0.8" />
+        <ellipse cx="1.8" cy="0" rx="1.7" ry="1" fill="#E8D8FF" opacity="0.8" />
+        <circle cx="0" cy="0" r="0.7" fill="#BFE8D8" />
+      </g>
+
+      {/* Small mint leaf accent */}
+      <path d="M14.5 14.5c-.3 1-1 1.5-2 1.5 0-1 .5-1.8 1.5-2 .3 0 .5.2.5.5z" fill="#BFE8D8" opacity="0.7" />
     </svg>
   );
 }
