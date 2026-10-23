@@ -1,6 +1,7 @@
-// Saheli AI — curated knowledge base with safety-first response engine
-// Uses retrieval from educational content + safety rules
-// No external AI API keys are exposed. Falls back to curated content when no API is configured.
+// Saheli AI — conversational AI companion with safety-first response engine
+// Calls a Supabase Edge Function that securely proxies to an AI provider.
+// Safety checks (urgent symptoms, crisis, diagnosis, medication) run client-side first.
+// Falls back to curated content retrieval when the AI service is unavailable.
 
 import { articles, getArticleById, type LearnArticle } from './content';
 
@@ -12,13 +13,25 @@ export interface SaheliResponse {
   urgentMessage?: string;
 }
 
+export interface ConversationMessage {
+  role: 'user' | 'assistant';
+  content: string;
+}
+
 // Urgent symptom keywords that require immediate care guidance
 const URGENT_KEYWORDS = [
   'severe pain', 'unbearable pain', 'sudden severe', 'fainting', 'faint',
   'can\'t breathe', 'chest pain', 'soaking through', 'soaking a pad',
   'passing out', 'loss of consciousness', 'heavy bleeding', 'very heavy',
-  'blood clot', 'large clots', 'dizziness', 'severe dizziness',
+  'blood clot', 'large clots', 'severe dizziness',
   'high fever', 'vomiting blood', 'severe weakness',
+];
+
+// Crisis keywords — self-harm, suicidal ideation
+const CRISIS_KEYWORDS = [
+  'suicide', 'kill myself', 'end my life', 'self-harm', 'hurt myself',
+  'don\'t want to live', 'dont want to live', 'want to die', 'ending it all',
+  'no reason to live', 'better off dead',
 ];
 
 // Diagnosis-seeking keywords
@@ -27,7 +40,6 @@ const DIAGNOSIS_KEYWORDS = [
   'is it endometriosis', 'do i have endometriosis', 'am i anemic',
   'diagnose me', 'what condition do i have', 'is something wrong with me',
   'confirm pregnancy', 'confirm ovulation', 'am i fertile', 'am i ovulating',
-  'what hormone', 'hormone levels',
 ];
 
 // Medication dosage keywords
@@ -92,7 +104,7 @@ const KEYWORD_MAP: { keywords: string[]; articleIds: string[] }[] = [
   },
   {
     keywords: ['when to see', 'when to go', 'doctor', 'medical care', 'emergency', 'seek help', 'worried', 'should i be worried', 'serious'],
-    articleIds: ['when-to-seek-care', 'symptom-guidance' ],
+    articleIds: ['when-to-seek-care', 'symptom-guidance'],
   },
   {
     keywords: ['stigma', 'shame', 'embarrassed', 'talk about', 'taboo', 'culturally', 'society'],
@@ -117,6 +129,11 @@ function checkUrgent(query: string): boolean {
   return URGENT_KEYWORDS.some(k => q.includes(k));
 }
 
+function checkCrisis(query: string): boolean {
+  const q = query.toLowerCase();
+  return CRISIS_KEYWORDS.some(k => q.includes(k));
+}
+
 function checkDiagnosis(query: string): boolean {
   const q = query.toLowerCase();
   return DIAGNOSIS_KEYWORDS.some(k => q.includes(k));
@@ -137,7 +154,6 @@ function retrieveArticles(query: string): LearnArticle[] {
     }
   }
 
-  // Also search article content directly
   const direct = articles.filter(a =>
     a.title.toLowerCase().includes(q) ||
     a.summary.toLowerCase().includes(q) ||
@@ -148,15 +164,15 @@ function retrieveArticles(query: string): LearnArticle[] {
   return Array.from(matchedIds).map(id => getArticleById(id)).filter(Boolean) as LearnArticle[];
 }
 
-function buildResponseFromArticles(matchedArticles: LearnArticle[]): string {
+function buildFallbackResponse(query: string): string {
+  const matchedArticles = retrieveArticles(query);
   if (matchedArticles.length === 0) {
-    return "I don't have enough specific information to answer that question well. I'd recommend exploring the Learning Hub for curated articles from trusted health sources, or speaking with a healthcare professional for personalized guidance. You can also try rephrasing your question.";
+    return "I'm not sure I have enough information to answer that well right now, lovely. 💗 Could you try rephrasing, or explore the Learning Hub for curated articles? I'm here whenever you need me.";
   }
 
   const primary = matchedArticles[0];
   let text = primary.summary + '\n\n';
 
-  // Include the most relevant section
   const firstSection = primary.sections[0];
   if (firstSection) {
     text += firstSection.body;
@@ -169,76 +185,155 @@ function buildResponseFromArticles(matchedArticles: LearnArticle[]): string {
   return text;
 }
 
-export function getSaheliResponse(query: string): SaheliResponse {
-  const isUrgent = checkUrgent(query);
-  const isDiagnosis = checkDiagnosis(query);
-  const isMedication = checkMedication(query);
+// Urgent care response
+function urgentResponse(): SaheliResponse {
+  return {
+    text: "What you're describing may need prompt medical attention. Based on general health guidance, severe or sudden symptoms during your period should not be dismissed. Please contact a healthcare provider or emergency services right away.\n\nIf you are experiencing: severe pain that is different from your usual cramps, very heavy bleeding (soaking through a pad every hour for 2-3 hours), fainting, fever, or difficulty breathing — seek emergency care immediately.\n\nDo not wait. Your safety comes first. 💗",
+    sources: [
+      { name: 'Mayo Clinic — When to seek care', url: 'https://www.mayoclinic.org/healthy-lifestyle/womens-health/in-depth/menstrual-cycle/art-20047190' },
+      { name: 'NHS — Emergency care', url: 'https://www.nhs.uk/using-the-nhs/nhs-services/urgent-and-emergency-care/' },
+    ],
+    relatedArticleIds: ['when-to-seek-care', 'period-pain'],
+    isUrgent: true,
+    urgentMessage: 'This sounds like it may need urgent care. Please contact a healthcare provider or emergency services now.',
+  };
+}
 
-  // Safety-first: urgent symptoms get immediate care guidance
-  if (isUrgent) {
-    return {
-      text: "What you're describing may need prompt medical attention. Based on general health guidance, severe or sudden symptoms during your period should not be dismissed. Please contact a healthcare provider or emergency services right away.\n\nIf you are experiencing: severe pain that is different from your usual cramps, very heavy bleeding (soaking through a pad every hour for 2-3 hours), fainting, fever, or difficulty breathing — seek emergency care immediately.\n\nDo not wait. Your safety comes first.",
-      sources: [
-        { name: 'Mayo Clinic — When to seek care', url: 'https://www.mayoclinic.org/healthy-lifestyle/womens-health/in-depth/menstrual-cycle/art-20047190' },
-        { name: 'NHS — Emergency care', url: 'https://www.nhs.uk/using-the-nhs/nhs-services/urgent-and-emergency-care/' },
-      ],
-      relatedArticleIds: ['when-to-seek-care', 'period-pain'],
-      isUrgent: true,
-      urgentMessage: 'This sounds like it may need urgent care. Please contact a healthcare provider or emergency services now.',
-    };
+// Crisis response
+function crisisResponse(): SaheliResponse {
+  return {
+    text: "I hear you, and I'm really glad you're talking to me right now. 💗 What you're feeling matters, and you don't have to carry this alone.\n\nIf you're in immediate danger or having thoughts of self-harm, please reach out to someone right now:\n\n• In India: iCall at 9152987821 or AASRA at 9820466726\n• Emergency services: 112 (India), 911 (US), 999 (UK)\n• Or go to your nearest emergency room\n\nYou deserve support from someone who can be there for you. A trusted friend, family member, teacher, or counselor can help. Please don't go through this alone right now.",
+    sources: [
+      { name: 'iCall Helpline (India)', url: 'https://icallhelpline.org' },
+      { name: 'AASRA Helpline (India)', url: 'https://www.aasra.info' },
+      { name: 'International Association for Suicide Prevention', url: 'https://www.iasp.info/resources/Crisis_Centres/' },
+    ],
+    relatedArticleIds: ['emotional-wellbeing'],
+    isUrgent: true,
+    urgentMessage: 'If you are in immediate danger or having thoughts of self-harm, please contact emergency services or a crisis helpline right now. You matter.',
+  };
+}
+
+// Diagnosis-seeking response (still sends to AI for the conversational part, but with guardrails)
+function diagnosisGuardrail(): string {
+  return "I can't diagnose conditions or determine your hormonal or pregnancy status — that requires a proper medical evaluation by a healthcare professional. What I can share is general educational information.\n\nIf you're concerned about a specific condition, please speak with a healthcare provider. They can perform the right tests and give you an accurate answer. Self-diagnosing from an app or online information is not reliable.";
+}
+
+// Medication dosage guardrail
+function medicationGuardrail(): string {
+  return "I can't provide specific medication dosing instructions — the right dose depends on your individual health, other medications, and medical history. For safe medication guidance:\n\n• Follow the instructions on the medicine package\n• Consult a pharmacist — they can advise you for free\n• Talk to your healthcare provider if you have health conditions or take other medications\n\nNever exceed the recommended dose on the label without professional advice.";
+}
+
+// Call the edge function for AI-powered conversational responses
+async function callAI(
+  messages: ConversationMessage[],
+  safetyContext?: string
+): Promise<string> {
+  const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/saheli-chat`;
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+  };
+
+  // Add safety context as a system message if present
+  const apiMessages = safetyContext
+    ? [{ role: 'assistant', content: safetyContext }, ...messages]
+    : messages;
+
+  const response = await fetch(apiUrl, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({ messages: apiMessages }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`AI service returned ${response.status}`);
   }
 
-  // Safety: redirect diagnosis-seeking questions
+  const data = await response.json();
+
+  if (data.reply && typeof data.reply === 'string') {
+    return data.reply;
+  }
+
+  throw new Error('AI service returned no reply');
+}
+
+/**
+ * Main entry point — sends a message to Saheli AI.
+ * Runs safety pre-checks first, then calls the edge function for conversational responses.
+ * Falls back to curated content if the AI service is unavailable.
+ */
+export async function getSaheliResponse(
+  query: string,
+  conversationHistory?: ConversationMessage[]
+): Promise<SaheliResponse> {
+  const isUrgent = checkUrgent(query);
+  const isCrisis = checkCrisis(query);
+  const isDiagnosis = checkDiagnosis(query);
+  const isMedication = checkMedication(query);
+  const matchedArticles = retrieveArticles(query);
+
+  // Safety-first: urgent symptoms get immediate care guidance
+  if (isUrgent && !isCrisis) {
+    return urgentResponse();
+  }
+
+  // Safety-first: crisis gets immediate compassionate response with resources
+  if (isCrisis) {
+    return crisisResponse();
+  }
+
+  // Build safety context for the AI
+  let safetyContext: string | undefined;
   if (isDiagnosis) {
-    const matchedArticles = retrieveArticles(query);
-    const relevantArticle = matchedArticles[0];
+    safetyContext = diagnosisGuardrail();
+  } else if (isMedication) {
+    safetyContext = medicationGuardrail();
+  }
+
+  // Build conversation messages for the AI
+  const messages: ConversationMessage[] = [
+    ...(conversationHistory || []),
+    { role: 'user', content: query },
+  ];
+
+  try {
+    const aiReply = await callAI(messages, safetyContext);
+
     return {
-      text: `I can't diagnose conditions or determine your hormonal or pregnancy status — that requires a proper medical evaluation by a healthcare professional. What I can share is general educational information.${relevantArticle ? `\n\nBased on your question, here's what I can tell you: ${relevantArticle.summary}` : ''}\n\nIf you're concerned about a specific condition, please speak with a healthcare provider. They can perform the right tests and give you an accurate answer. Self-diagnosing from an app or online information is not reliable.`,
-      sources: relevantArticle ? relevantArticle.sources : [
-        { name: 'Mayo Clinic — Find a doctor', url: 'https://www.mayoclinic.org/appointments' },
-      ],
+      text: aiReply,
+      sources: matchedArticles.length > 0 ? matchedArticles[0].sources : [],
+      relatedArticleIds: matchedArticles.slice(0, 3).map(a => a.id),
+      isUrgent: false,
+    };
+  } catch {
+    // Fallback to curated content if AI service is unavailable
+    let text = buildFallbackResponse(query);
+
+    if (isDiagnosis) {
+      text = diagnosisGuardrail() + '\n\n' + (matchedArticles[0]?.summary || '');
+    } else if (isMedication) {
+      text = medicationGuardrail();
+    }
+
+    return {
+      text,
+      sources: matchedArticles.length > 0 ? matchedArticles[0].sources : [],
       relatedArticleIds: matchedArticles.slice(0, 3).map(a => a.id),
       isUrgent: false,
     };
   }
-
-  // Safety: redirect medication dosage questions
-  if (isMedication) {
-    return {
-      text: "I can't provide specific medication dosing instructions — the right dose depends on your individual health, other medications, and medical history. For safe medication guidance:\n\n• Follow the instructions on the medicine package\n• Consult a pharmacist — they can advise you for free\n• Talk to your healthcare provider if you have health conditions or take other medications\n\nNever exceed the recommended dose on the label without professional advice.",
-      sources: [
-        { name: 'FDA — Medication safety', url: 'https://www.fda.gov/consumers/consumer-updates' },
-        { name: 'Mayo Clinic — Drug information', url: 'https://www.mayoclinic.org/drugs-supplements' },
-      ],
-      relatedArticleIds: ['period-pain'],
-      isUrgent: false,
-    };
-  }
-
-  // Normal retrieval-based response
-  const matchedArticles = retrieveArticles(query);
-  const text = buildResponseFromArticles(matchedArticles);
-  const sources = matchedArticles.length > 0 ? matchedArticles[0].sources : [];
-  const relatedArticleIds = matchedArticles.slice(0, 3).map(a => a.id);
-
-  return {
-    text,
-    sources,
-    relatedArticleIds,
-    isUrgent: false,
-  };
 }
 
-// Suggested questions for the chat interface
+// Suggested conversation starters for the chat interface
 export const SUGGESTED_QUESTIONS = [
-  'Why might my period be late?',
-  'What can I do for period cramps?',
-  'What does an irregular cycle mean?',
-  'How do I use a tampon safely?',
-  'What should I know about my first period?',
-  'When should I see a doctor?',
-  'How can I talk to someone about periods?',
-  'What is PCOS?',
+  '💗 I need someone to listen',
+  '🌸 Help me understand my period',
+  '🫶 I\'m feeling overwhelmed',
+  '🩷 My period is late',
+  '✨ Help me feel better today',
+  '🌷 Tell me about menstrual hygiene',
 ];
 
 // Symptom guidance data for the "Should I be worried?" section

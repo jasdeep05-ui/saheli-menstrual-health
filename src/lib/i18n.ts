@@ -145,14 +145,16 @@ export const translations = {
 
     // Ask Saheli
     askTitle: 'Ask Saheli',
-    askIntro: "Hi! I'm Saheli, your menstrual health companion. I can share general health information from trusted sources. I can't diagnose conditions or replace a healthcare professional. What would you like to know?",
+    askIntro: "Hi, lovely! 💗 I'm Saheli, your health and wellbeing companion. You can talk to me about anything — your period, your feelings, a tough day, or just to chat. I'm not a doctor, but I'm always here to listen and help. What's on your mind?",
     askPlaceholder: 'Type your question...',
     askSend: 'Send',
     askSources: 'Sources',
     askDisclaimer: 'Saheli provides general educational information, not medical advice. Always consult a healthcare professional for personal health concerns. In an emergency, contact your local emergency number.',
     askUnavailable: 'I\'m having trouble responding right now. Here are some resources that may help:',
     askThinking: 'Thinking...',
-    askPrivacyNote: 'Your question is processed for educational purposes. No personal health data is stored.',
+    askNewChat: 'New chat',
+    askTryAgain: 'Try again',
+    askErrorOccurred: 'I had trouble responding just now. Please try sending your message again. 💗',
 
     // Learn
     learnTitle: 'Learning Hub',
@@ -358,14 +360,17 @@ export const translations = {
     insightsDisclaimer: 'ये अवलोकन केवल आपके रिकॉर्ड किए गए डेटा पर आधारित हैं। ये किसी भी स्थिति का निदान नहीं करते या हार्मोनल स्थिति निर्धारित नहीं करते। चिकित्सा सलाह के लिए एक योग्य चिकित्सक से परामर्श करें।',
 
     askTitle: 'Saheli से पूछें',
-    askIntro: "नमस्ते! मैं Saheli हूं, आपकी मासिक स्वास्थ्य साथी। मैं भरोसेमंद स्रोतों से सामान्य स्वास्थ्य जानकारी साझा कर सकती हूं। मैं स्थितियों का निदान नहीं कर सकती या किसी चिकित्सक की जगह नहीं ले सकती। आप क्या जानना चाहते हैं?",
+    askIntro: "नमस्ते, लवली! 💗 मैं Saheli हूं, आपकी स्वास्थ्य और कल्याण साथी। आप मुझसे कुछ भी पूछ सकती हैं — अपनी अवधि, अपनी भावनाओं, एक मुश्किल दिन, या बस बात करने के लिए। मैं डॉक्टर नहीं हूं, लेकिन सुनने और मदद करने के लिए हमेशा यहां हूं। आपके मन में क्या है?",
     askPlaceholder: 'अपना प्रश्न टाइप करें...',
     askSend: 'भेजें',
     askSources: 'स्रोत',
     askDisclaimer: 'Saheli सामान्य शैक्षिक जानकारी प्रदान करता है, चिकित्सा सलाह नहीं। व्यक्तिगत स्वास्थ्य चिंताओं के लिए हमेशा किसी योग्य चिकित्सक से परामर्श करें। आपातकाल में, अपनी स्थानीय आपातकालीन नंबर पर संपर्क करें।',
     askUnavailable: 'मुझे अभी जवाब देने में परेशानी हो रही है। यहां कुछ संसाधन हैं जो मदद कर सकते हैं:',
     askThinking: 'सोच रही हूं...',
-    askPrivacyNote: 'आपका प्रश्न शैक्षिक उद्देश्यों के लिए संसाधित होता है। कोई व्यक्तिगत स्वास्थ्य डेटा संग्रहीत नहीं किया जाता।',
+    askPrivacyNote: 'आपके संदेश एक AI प्रदाता द्वारा उत्तर देने के लिए संसाधित होते हैं। व्यक्तिगत पहचान वावल जानकारी साझा न करें। हमारे सर्वर पर कोई चैट इतिहास संग्रहीत नहीं किया जाता।',
+    askNewChat: 'नई चैट',
+    askTryAgain: 'पुनः प्रयास करें',
+    askErrorOccurred: 'मुझे अभी जवाब देने में परेशानी हो रही है। कृपया अपना संदेश दोबारा भेजें। 💗',
 
     learnTitle: 'लर्निंग हब',
     learnSearch: 'लेख खोजें...',

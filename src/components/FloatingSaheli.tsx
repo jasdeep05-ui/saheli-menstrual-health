@@ -1,10 +1,10 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useApp } from '../lib/app-context';
 import { GirlIllustration } from './GirlIllustration';
-import { getSaheliResponse, type SaheliResponse } from '../lib/saheli-ai';
+import { getSaheliResponse, SUGGESTED_QUESTIONS, type SaheliResponse, type ConversationMessage } from '../lib/saheli-ai';
 import { getArticleById } from '../lib/content';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { AlertTriangle, Send, ExternalLink, BookOpen, X } from 'lucide-react';
+import { AlertTriangle, Send, ExternalLink, BookOpen, X, RotateCcw, Heart } from 'lucide-react';
 
 interface ChatMessage {
   role: 'user' | 'saheli';
@@ -12,6 +12,8 @@ interface ChatMessage {
   sources?: { name: string; url: string }[];
   relatedArticleIds?: string[];
   isUrgent?: boolean;
+  urgentMessage?: string;
+  isError?: boolean;
 }
 
 export function FloatingSaheli() {
@@ -28,13 +30,8 @@ export function FloatingSaheli() {
   const panelRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
 
-  const FLOATING_GREETING = 'Hi, lovely! \u{1F497} What would you like to ask me?';
-  const FLOATING_SUGGESTIONS = [
-    'Why am I having cramps?',
-    'How can I manage period discomfort?',
-    'Is my cycle regular?',
-    'When should I seek medical help?',
-  ];
+  const FLOATING_GREETING = 'Hi, lovely! 💗 What would you like to talk about?';
+  const FLOATING_SUGGESTIONS = SUGGESTED_QUESTIONS.slice(0, 4);
 
   useEffect(() => {
     if (open && messages.length === 0) {
@@ -65,23 +62,47 @@ export function FloatingSaheli() {
     return () => document.removeEventListener('keydown', handleEsc);
   }, [open]);
 
-  const handleSend = useCallback((question?: string) => {
+  const buildConversationHistory = useCallback((currentMessages: ChatMessage[]): ConversationMessage[] => {
+    return currentMessages
+      .filter(m => !m.isError)
+      .map(m => ({
+        role: m.role === 'saheli' ? 'assistant' : 'user',
+        content: m.text,
+      }))
+      .slice(-10);
+  }, []);
+
+  const handleSend = useCallback(async (question?: string) => {
     const query = question || input.trim();
     if (!query || loading) return;
 
-    setMessages(m => [...m, { role: 'user', text: query }]);
+    const userMsg: ChatMessage = { role: 'user', text: query };
+    setMessages(m => [...m, userMsg]);
     setInput('');
     setLoading(true);
 
-    setTimeout(() => {
-      const response: SaheliResponse = getSaheliResponse(query);
+    try {
+      const history = buildConversationHistory([...messages, userMsg]);
+      const response: SaheliResponse = await getSaheliResponse(query, history.slice(0, -1));
       setMessages(m => [...m, {
         role: 'saheli', text: response.text, sources: response.sources,
         relatedArticleIds: response.relatedArticleIds, isUrgent: response.isUrgent,
+        urgentMessage: response.urgentMessage,
       }]);
+    } catch {
+      setMessages(m => [...m, {
+        role: 'saheli', text: t('askErrorOccurred'), isError: true,
+      }]);
+    } finally {
       setLoading(false);
-    }, 800);
-  }, [input, loading]);
+    }
+  }, [input, loading, messages, buildConversationHistory, t]);
+
+  const handleNewChat = () => {
+    setMessages([{ role: 'saheli', text: FLOATING_GREETING }]);
+    setInput('');
+    setLoading(false);
+  };
 
   const showSuggestions = messages.length <= 1;
 
@@ -109,7 +130,7 @@ export function FloatingSaheli() {
           </span>
         )}
 
-        {/* The girl illustration with bounce animation */}
+        {/* The girl illustration with sway animation */}
         <span className="block animate-sway">
           <GirlIllustration size={56} />
         </span>
@@ -143,24 +164,36 @@ export function FloatingSaheli() {
                   <p className="text-[10px] text-plum-300">Your health companion</p>
                 </div>
               </div>
-              <button
-                onClick={() => setOpen(false)}
-                className="rounded-lg p-1.5 text-plum-400 transition-colors hover:bg-cream-100 hover:text-plum-600"
-                aria-label="Close chat"
-              >
-                <X size={20} />
-              </button>
+              <div className="flex items-center gap-1">
+                {messages.length > 1 && (
+                  <button
+                    onClick={handleNewChat}
+                    className="rounded-lg p-1.5 text-plum-400 transition-colors hover:bg-cream-100 hover:text-plum-600"
+                    aria-label={t('askNewChat')}
+                  >
+                    <RotateCcw size={16} />
+                  </button>
+                )}
+                <button
+                  onClick={() => setOpen(false)}
+                  className="rounded-lg p-1.5 text-plum-400 transition-colors hover:bg-cream-100 hover:text-plum-600"
+                  aria-label="Close chat"
+                >
+                  <X size={20} />
+                </button>
+              </div>
             </div>
-
-            {/* Disclaimer */}
-
 
             {/* Messages */}
             <div className="flex-1 space-y-3 overflow-y-auto px-4 py-3">
               {messages.map((msg, i) => (
                 <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'} animate-fade-in`}>
                   <div className={`max-w-[85%] rounded-2xl px-3 py-2.5 ${
-                    msg.role === 'user' ? 'bg-coral-400 text-white' : 'bg-cream-50 border border-cream-200 text-plum-600'
+                    msg.role === 'user'
+                      ? 'bg-coral-400 text-white'
+                      : msg.isError
+                        ? 'bg-blush-100 border border-blush-200 text-plum-600'
+                        : 'bg-cream-50 border border-cream-200 text-plum-600'
                   }`}>
                     {msg.isUrgent && (
                       <div className="mb-2 flex items-center gap-1.5 rounded-lg bg-blush-100 px-2.5 py-1">
@@ -168,7 +201,20 @@ export function FloatingSaheli() {
                         <span className="text-[10px] font-semibold text-coral-600">Urgent care guidance</span>
                       </div>
                     )}
+                    {msg.isUrgent && msg.urgentMessage && (
+                      <p className="mb-1.5 text-[10px] font-medium text-coral-600">{msg.urgentMessage}</p>
+                    )}
                     <p className="whitespace-pre-wrap text-xs leading-relaxed">{msg.text}</p>
+
+                    {msg.isError && (
+                      <button
+                        onClick={() => handleSend(messages[i - 1]?.text)}
+                        className="mt-1.5 flex items-center gap-1 text-[10px] font-medium text-coral-500 hover:underline"
+                      >
+                        <RotateCcw size={10} />
+                        {t('askTryAgain')}
+                      </button>
+                    )}
 
                     {msg.sources && msg.sources.length > 0 && (
                       <div className="mt-2 border-t border-cream-200 pt-1.5">
@@ -205,10 +251,13 @@ export function FloatingSaheli() {
               {loading && (
                 <div className="flex justify-start animate-fade-in">
                   <div className="rounded-2xl bg-cream-50 border border-cream-200 px-3 py-2.5">
-                    <div className="flex gap-1">
-                      <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-coral-300" style={{ animationDelay: '0ms' }} />
-                      <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-coral-300" style={{ animationDelay: '150ms' }} />
-                      <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-coral-300" style={{ animationDelay: '300ms' }} />
+                    <div className="flex items-center gap-2">
+                      <Heart size={12} className="text-coral-300 animate-pulse" />
+                      <div className="flex gap-1">
+                        <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-coral-300" style={{ animationDelay: '0ms' }} />
+                        <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-coral-300" style={{ animationDelay: '150ms' }} />
+                        <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-coral-300" style={{ animationDelay: '300ms' }} />
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -220,7 +269,7 @@ export function FloatingSaheli() {
             {/* Suggested questions */}
             {showSuggestions && !loading && (
               <div className="px-4 pb-2">
-                <p className="mb-1.5 text-[10px] font-medium text-plum-400">Try asking:</p>
+                <p className="mb-1.5 text-[10px] font-medium text-plum-400">Start a conversation:</p>
                 <div className="flex flex-wrap gap-1.5">
                   {FLOATING_SUGGESTIONS.map((q, i) => (
                     <button key={i} onClick={() => handleSend(q)}
