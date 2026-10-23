@@ -36,11 +36,11 @@ export function Modal({ open, onClose, title, children, size = 'md' }: ModalProp
       aria-label={title}
     >
       <div
-        className={`card w-full ${sizeClass} max-h-[90vh] overflow-y-auto rounded-b-none sm:rounded-2xl animate-slide-up`}
+        className={`card w-full ${sizeClass} max-h-[92vh] flex flex-col rounded-b-none sm:rounded-2xl animate-slide-up`}
         onClick={e => e.stopPropagation()}
       >
         {title && (
-          <div className="flex items-center justify-between border-b border-cream-200 px-5 py-4">
+          <div className="flex shrink-0 items-center justify-between border-b border-cream-200 px-5 py-4">
             <h2 className="text-lg font-semibold text-plum-700">{title}</h2>
             <button
               onClick={onClose}
@@ -51,7 +51,12 @@ export function Modal({ open, onClose, title, children, size = 'md' }: ModalProp
             </button>
           </div>
         )}
-        <div className="p-5">{children}</div>
+        <div
+          className="overflow-y-auto p-5"
+          style={{ WebkitOverflowScrolling: 'touch' }}
+        >
+          {children}
+        </div>
       </div>
     </div>
   );
