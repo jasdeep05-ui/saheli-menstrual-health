@@ -6,16 +6,20 @@ import { Modal } from '../components/Modal';
 import { EmptyState } from '../components/States';
 import { ProgressRing } from '../components/Charts';
 import { articles } from '../lib/content';
-import { Calendar, Heart, MessageCircle, BookOpen, LifeBuoy, Plus, Sparkles, CircleAlert as AlertCircle } from 'lucide-react';
+import { Calendar, Heart, MessageCircle, BookOpen, LifeBuoy, Plus, Sparkles, CircleAlert as AlertCircle, Flower2 } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import type { FlowIntensity, SymptomEntry, MoodType, EnergyLevel, SleepQuality } from '../types';
 import * as storage from '../lib/storage';
+import { getGreeting, getDailyQuote } from '../lib/welcome';
 
 export function Home() {
   const { t, lang, periods, symptoms, refreshPeriods, refreshSymptoms, onboarding } = useApp();
   const navigate = useNavigate();
   const [showCheckin, setShowCheckin] = useState(false);
   const [showPeriodLog, setShowPeriodLog] = useState(false);
+
+  const [greeting] = useState(() => getGreeting());
+  const [dailyQuote] = useState(() => getDailyQuote());
 
   const cycleInfo = getCycleInfo(periods);
   const trackingEnabled = onboarding.trackingEnabled;
@@ -43,11 +47,17 @@ export function Home() {
   return (
     <div className="space-y-5">
       {/* Welcome header */}
-      <div>
-        <p className="text-sm text-plum-400">{t('homeWelcome')}</p>
-        <h1 className="font-display text-2xl font-semibold text-plum-700">
-          {lang === 'hi' ? 'Saheli' : 'Saheli'}
+      <div className="animate-fade-in">
+        <div className="flex items-center gap-2">
+          <Flower2 size={20} className="text-coral-400 animate-sway" />
+          <p className="text-sm font-medium text-coral-500">{t('homeWelcome')}</p>
+        </div>
+        <h1 className="mt-1 font-display text-2xl font-semibold leading-tight text-plum-500">
+          {greeting}, Saheli!
         </h1>
+        <p className="mt-2 text-sm leading-relaxed text-plum-400">
+          {dailyQuote}
+        </p>
       </div>
 
       {/* Cycle overview */}
