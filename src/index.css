@@ -1,0 +1,77 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-cream-50 text-plum-600 font-sans antialiased;
+    font-size: 16px;
+    line-height: 1.5;
+  }
+
+  h1, h2, h3, h4 {
+    @apply font-display text-plum-700;
+    line-height: 1.2;
+  }
+
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  *:focus-visible {
+    @apply outline-2 outline-offset-2 outline-coral-400;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-2xl bg-coral-400 px-6 py-3 text-base font-semibold text-white shadow-soft transition-all hover:bg-coral-500 active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-2xl bg-cream-200 px-6 py-3 text-base font-semibold text-plum-600 transition-all hover:bg-cream-300 active:scale-[0.98];
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm font-medium text-plum-500 transition-all hover:bg-cream-100 active:scale-[0.98];
+  }
+
+  .card {
+    @apply rounded-2xl bg-white border border-cream-200 shadow-soft;
+  }
+
+  .input-field {
+    @apply w-full rounded-xl border border-cream-300 bg-white px-4 py-3 text-base text-plum-600 placeholder:text-plum-300 transition-colors focus:border-coral-300 focus:outline-none focus:ring-2 focus:ring-coral-100;
+  }
+
+  .badge {
+    @apply inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
