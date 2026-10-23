@@ -84,6 +84,15 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
       {/* Main content area */}
       <div className="lg:pl-60">
+        {/* Mobile settings button */}
+        <NavLink
+          to="/settings"
+          className="fixed right-4 top-4 z-30 flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-plum-400 shadow-soft backdrop-blur-sm transition-colors hover:text-coral-500 lg:hidden"
+          style={{ top: 'calc(env(safe-area-inset-top) + 1rem)' }}
+          aria-label={t('navSettings')}
+        >
+          <Settings size={20} />
+        </NavLink>
         <main className="mx-auto max-w-2xl px-4 pb-24 pt-6 lg:max-w-4xl lg:pb-8 lg:pt-8">
           {children}
         </main>
