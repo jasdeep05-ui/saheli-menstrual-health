@@ -69,6 +69,18 @@ async function searchNearbyPharmacies(lat: number, lon: number): Promise<NearbyP
   return places;
 }
 
+async function ipGeolocate(): Promise<{ lat: number; lon: number }> {
+  const res = await fetch('https://ipapi.co/json/');
+  if (!res.ok) throw new Error('IP geolocation failed');
+  const data = await res.json();
+  if (typeof data.latitude !== 'number' || typeof data.longitude !== 'number') {
+    throw new Error('IP geolocation returned no coordinates');
+  }
+  return { lat: data.latitude, lon: data.longitude };
+}
+
+
+
 export function FindEssentials() {
   const navigate = useNavigate();
   const [status, setStatus] = useState<Status>('idle');
@@ -77,44 +89,70 @@ export function FindEssentials() {
   const [manualQuery, setManualQuery] = useState('');
   const [coords, setCoords] = useState<{ lat: number; lon: number } | null>(null);
 
-  const handleUseLocation = useCallback(() => {
-    if (!navigator.geolocation) {
-      setStatus('error');
-      setErrorMsg('Your browser does not support location services. Try the manual search instead.');
-      return;
-    }
+  const [locationMethod, setLocationMethod] = useState<'gps' | 'ip' | null>(null);
 
+  const performSearch = useCallback(async (lat: number, lon: number, method: 'gps' | 'ip') => {
+    setCoords({ lat, lon });
+    setLocationMethod(method);
+    try {
+      const results = await searchNearbyPharmacies(lat, lon);
+      if (results.length === 0) {
+        setStatus('no-results');
+      } else {
+        setPlaces(results);
+        setStatus('success');
+      }
+    } catch {
+      setStatus('error');
+      setErrorMsg('Could not reach the nearby-places service. You can still search in Google Maps below.');
+    }
+  }, []);
+
+  const handleUseLocation = useCallback(() => {
     setStatus('loading');
     setErrorMsg('');
 
-    navigator.geolocation.getCurrentPosition(
- async (position) => {
-        const { latitude, longitude } = position.coords;
-        setCoords({ lat: latitude, lon: longitude });
-        try {
-          const results = await searchNearbyPharmacies(latitude, longitude);
-          if (results.length === 0) {
-            setStatus('no-results');
-          } else {
-            setPlaces(results);
-            setStatus('success');
-          }
-        } catch {
+    if (!navigator.geolocation) {
+      // No geolocation API — fall back to IP-based location immediately
+      ipGeolocate()
+        .then(({ lat, lon }) => performSearch(lat, lon, 'ip'))
+        .catch(() => {
           setStatus('error');
-          setErrorMsg('Could not reach the nearby-places service. You can still search in Google Maps below.');
-        }
+          setErrorMsg('Could not determine your location. Try entering your city manually above.');
+        });
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        performSearch(latitude, longitude, 'gps');
       },
       (err) => {
-        if (err.code === err.PERMISSION_DENIED) {
-          setStatus('permission-denied');
+        if (err.code === err.PERMISSION_DENIED || err.code === err.POSITION_UNAVAILABLE || err.code === err.TIMEOUT) {
+          // GPS failed (permission denied, unavailable, or timeout) — try IP-based fallback
+          ipGeolocate()
+            .then(({ lat, lon }) => performSearch(lat, lon, 'ip'))
+            .catch(() => {
+              if (err.code === err.PERMISSION_DENIED) {
+                setStatus('permission-denied');
+              } else {
+                setStatus('error');
+                setErrorMsg('Could not access your precise location, and approximate location also failed. Try entering your city manually above.');
+              }
+            });
         } else {
-          setStatus('error');
-          setErrorMsg('Could not access your location. Try the manual search instead.');
+          ipGeolocate()
+            .then(({ lat, lon }) => performSearch(lat, lon, 'ip'))
+            .catch(() => {
+              setStatus('error');
+              setErrorMsg('Could not access your location. Try entering your city manually above.');
+            });
         }
       },
-      { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 }
+      { enableHighAccuracy: false, timeout: 8000, maximumAge: 300000 }
     );
-  }, []);
+  }, [performSearch]);
 
   const handleManualSearch = useCallback(async () => {
     const q = manualQuery.trim();
@@ -314,9 +352,16 @@ export function FindEssentials() {
       {status === 'success' && places.length > 0 && (
         <div className="space-y-3 animate-fade-in">
           <div className="flex items-center justify-between">
-            <h2 className="font-display text-lg font-semibold text-plum-700">
-              {places.length} {places.length === 1 ? 'store' : 'stores'} nearby
-            </h2>
+            <div>
+              <h2 className="font-display text-lg font-semibold text-plum-700">
+                {places.length} {places.length === 1 ? 'store' : 'stores'} nearby
+              </h2>
+              {locationMethod === 'ip' && (
+                <p className="mt-0.5 text-[11px] text-plum-300">
+                  Approximate location based on your network — distances may be less precise.
+                </p>
+              )}
+            </div>
             <a
               href={googleMapsSearchUrl}
               target="_blank"
