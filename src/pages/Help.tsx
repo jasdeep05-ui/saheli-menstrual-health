@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { useApp } from '../lib/app-context';
+import { useNavigate } from 'react-router-dom';
 import { symptomGuidanceData, type SymptomGuidance } from '../lib/saheli-ai';
 import { generateSymptomSummary } from '../lib/cycle';
-import { ChevronDown, AlertTriangle, Stethoscope, Package, ShowerHead, MapPin, MessageSquare, Download, Check } from 'lucide-react';
+import { ChevronDown, AlertTriangle, Stethoscope, Package, ShowerHead, MapPin, MessageSquare, Download, Check, Navigation } from 'lucide-react';
 import { format } from 'date-fns';
 
 type Section = 'unexpected' | 'emergencyKit' | 'hygiene' | 'findSupport' | 'talkAbout' | 'symptomGuidance';
@@ -218,6 +219,8 @@ function SymptomGuidanceSection({ periods, symptoms }: { periods: import('../typ
 }
 
 function FindSupport() {
+  const navigate = useNavigate();
+
   const resources = [
     { name: 'World Health Organization — Menstrual Health', url: 'https://www.who.int/health-topics/menstrual-health', type: 'Public health resource' },
     { name: 'UNICEF — Menstrual Hygiene', url: 'https://www.unicef.org/wash/menstrual-hygiene', type: 'Support organization' },
@@ -228,6 +231,23 @@ function FindSupport() {
 
   return (
     <div className="space-y-4 animate-fade-in">
+      {/* Find Nearby Period Essentials card */}
+      <button
+        onClick={() => navigate('/find-essentials')}
+        className="card flex w-full items-center gap-4 p-5 text-left transition-all hover:shadow-card"
+      >
+        <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl bg-coral-50">
+          <Navigation size={24} className="text-coral-400" />
+        </div>
+        <div className="flex-1">
+          <h3 className="text-sm font-semibold text-plum-600">Find Nearby Period Essentials</h3>
+          <p className="mt-0.5 text-xs text-plum-400">
+            Locate pharmacies and medical stores near you that may stock pads, tampons, and menstrual cups.
+          </p>
+        </div>
+        <ChevronDown size={20} className="-rotate-90 text-plum-300" />
+      </button>
+
       <div className="card p-4">
         <p className="text-sm text-plum-400">
           These are general health resources from recognized organizations. For local healthcare facilities, search for clinics or hospitals in your area, or contact your local health department.

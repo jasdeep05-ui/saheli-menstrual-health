@@ -11,6 +11,7 @@ import { AskSaheli } from './pages/AskSaheli';
 import { Learn } from './pages/Learn';
 import { ArticleView } from './pages/ArticleView';
 import { Help } from './pages/Help';
+import { FindEssentials } from './pages/FindEssentials';
 import { Settings } from './pages/Settings';
 
 function AppRoutes() {
@@ -32,6 +33,7 @@ function AppRoutes() {
               <Route path="/learn" element={<Learn />} />
               <Route path="/learn/:articleId" element={<ArticleView />} />
               <Route path="/help" element={<Help />} />
+              <Route path="/find-essentials" element={<FindEssentials />} />
               <Route path="/settings" element={<Settings />} />
               <Route path="*" element={<Navigate to="/home" replace />} />
             </Routes>
