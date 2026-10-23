@@ -2,6 +2,7 @@ import { NavLink, useLocation } from 'react-router-dom';
 import { Chrome as Home, Calendar, MessageCircle, BookOpen, LifeBuoy } from 'lucide-react';
 import { useApp } from '../lib/app-context';
 import { SaheliWordmark } from './Logo';
+import { FloatingSaheli } from './FloatingSaheli';
 import { Settings } from 'lucide-react';
 
 const navItems = [
@@ -112,6 +113,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           })}
         </div>
       </nav>
+
+      {/* Floating AI assistant */}
+      <FloatingSaheli />
     </div>
   );
 }
