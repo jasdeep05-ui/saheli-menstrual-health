@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { AppProvider, useApp } from './lib/app-context';
 import { AppShell } from './components/AppShell';
+import { SplashScreen } from './components/SplashScreen';
 import { Welcome } from './pages/Welcome';
 import { Onboarding } from './pages/Onboarding';
 import { Home } from './pages/Home';
@@ -49,6 +50,7 @@ function AppRoutes() {
 export default function App() {
   return (
     <AppProvider>
+      <SplashScreen />
       <AppRoutes />
     </AppProvider>
   );

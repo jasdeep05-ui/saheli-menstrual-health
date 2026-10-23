@@ -1,0 +1,26 @@
+{
+  "name": "Saheli — Your Cycle. Your Health. Your Safe Space.",
+  "short_name": "Saheli",
+  "description": "A free, supportive menstrual-health companion for girls and women. Track your cycle, journal symptoms, learn about your body, and chat with Saheli AI.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FFF7F0",
+  "theme_color": "#FFF7F0",
+  "categories": ["health", "lifestyle", "medical"],
+  "lang": "en",
+  "icons": [
+    {
+      "src": "/icon-512.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}
