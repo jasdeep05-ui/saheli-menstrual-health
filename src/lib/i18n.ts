@@ -19,6 +19,7 @@ export const translations = {
     navSymptoms: 'Symptoms',
     navInsights: 'Insights',
     navSettings: 'Settings',
+    navMore: 'More',
 
     // Welcome
     getStarted: 'Get Started',
@@ -245,6 +246,7 @@ export const translations = {
     navSymptoms: 'लक्षण',
     navInsights: 'अंतर्दृष्टि',
     navSettings: 'सेटिंग्स',
+    navMore: 'अधिक',
 
     getStarted: 'शुरू करें',
     exploreWithout: 'बिना ट्रैकिंग के देखें',
