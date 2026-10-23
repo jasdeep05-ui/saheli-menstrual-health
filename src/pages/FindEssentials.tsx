@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { MapPin, Navigation, Search, Loader2, AlertTriangle, Store, Crosshair, ExternalLink, ChevronDown } from 'lucide-react';
+import { MapPin, Navigation, Search, Loader2, AlertTriangle, Store, Crosshair, ExternalLink, ChevronDown, MapPinned } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 interface NearbyPlace {
@@ -157,9 +157,13 @@ export function FindEssentials() {
     }
   }, [manualQuery]);
 
+  const [gmQuery, setGmQuery] = useState('');
+
   const googleMapsSearchUrl = coords
-    ? `https://www.google.com/maps/search/pharmacy+medical+store+period+essentials/@${coords.lat},${coords.lon},15z`
-    : `https://www.google.com/maps/search/pharmacy+medical+store+period+essentials+${encodeURIComponent(manualQuery || 'near me')}`;
+    ? `https://www.google.com/maps/search/pharmacy+medical+store/@${coords.lat},${coords.lon},15z`
+    : `https://www.google.com/maps/search/pharmacy+medical+store+${encodeURIComponent(gmQuery.trim() || manualQuery.trim() || 'near me')}`;
+
+  const hasGmLocation = coords !== null;
 
   return (
     <div className="space-y-5">
@@ -241,14 +245,16 @@ export function FindEssentials() {
 
       {/* Permission denied */}
       {status === 'permission-denied' && (
-        <div className="card p-5 animate-fade-in">
-          <div className="flex items-start gap-3">
-            <AlertTriangle size={20} className="mt-0.5 flex-shrink-0 text-coral-400" />
-            <div>
-              <h3 className="text-sm font-semibold text-plum-600">Location permission denied</h3>
-              <p className="mt-1 text-sm text-plum-400">
-                We can't find nearby stores without your location. You can either enable location permission in your browser settings and try again, or use the manual search above.
-              </p>
+        <div className="space-y-3 animate-fade-in">
+          <div className="card p-5">
+            <div className="flex items-start gap-3">
+              <AlertTriangle size={20} className="mt-0.5 flex-shrink-0 text-coral-400" />
+              <div>
+                <h3 className="text-sm font-semibold text-plum-600">Location permission denied</h3>
+                <p className="mt-1 text-sm text-plum-400">
+                  We can't find nearby stores without your location. You can either enable location permission in your browser settings and try again, use the manual search above, or search in Google Maps below.
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -377,27 +383,47 @@ export function FindEssentials() {
         </div>
       )}
 
-      {/* Always-available Google Maps fallback when idle */}
-      {status === 'idle' && (
-        <div className="card p-5 animate-fade-in">
-          <h3 className="mb-2 flex items-center gap-2 text-sm font-semibold text-plum-600">
-            <ExternalLink size={16} className="text-coral-400" />
-            Prefer to search in Google Maps?
-          </h3>
-          <p className="mb-3 text-xs text-plum-400">
-            If you'd rather use Google Maps directly, you can search for pharmacies and medical stores near you.
-          </p>
-          <a
-            href={googleMapsSearchUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn-secondary flex w-full items-center justify-center gap-2"
-          >
-            <ExternalLink size={16} />
-            Search in Google Maps
-          </a>
+      {/* Persistent Google Maps fallback — always visible */}
+      <div className="card p-5 animate-fade-in border-coral-200">
+        <div className="mb-3 flex items-center gap-2">
+          <MapPinned size={18} className="text-coral-400" />
+          <h3 className="text-sm font-semibold text-plum-600">Search in Google Maps</h3>
         </div>
-      )}
+
+        {hasGmLocation ? (
+          <p className="mb-3 text-xs text-plum-400">
+            Open Google Maps to search for pharmacies and medical stores near your shared location.
+          </p>
+        ) : (
+          <p className="mb-3 text-xs text-plum-400">
+            Enter a city or locality to search for pharmacies and medical stores on Google Maps, or leave blank to search near you.
+          </p>
+        )}
+
+        {!hasGmLocation && (
+          <div className="mb-3 flex gap-2">
+            <input
+              type="text"
+              value={gmQuery}
+              onChange={e => setGmQuery(e.target.value)}
+              onKeyDown={e => { if (e.key === 'Enter' && gmQuery.trim()) window.open(googleMapsSearchUrl, '_blank', 'noopener,noreferrer'); }}
+              placeholder="Enter city or locality for Google Maps..."
+              className="input-field flex-1 text-sm"
+              aria-label="Google Maps location search"
+            />
+          </div>
+        )}
+
+        <a
+          href={googleMapsSearchUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="btn-secondary flex w-full items-center justify-center gap-2"
+        >
+          <ExternalLink size={16} />
+          {hasGmLocation ? 'Search nearby pharmacies on Google Maps' : 'Search in Google Maps'}
+        </a>
+      </div>
     </div>
   );
 }
