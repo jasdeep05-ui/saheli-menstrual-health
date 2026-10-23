@@ -152,6 +152,7 @@ export const translations = {
     askDisclaimer: 'Saheli provides general educational information, not medical advice. Always consult a healthcare professional for personal health concerns. In an emergency, contact your local emergency number.',
     askUnavailable: 'I\'m having trouble responding right now. Here are some resources that may help:',
     askThinking: 'Thinking...',
+    askPrivacyNote: 'Your messages are processed by an AI provider to generate responses. Avoid sharing personal identifying details. No chat history is stored on our servers.',
     askNewChat: 'New chat',
     askTryAgain: 'Try again',
     askErrorOccurred: 'I had trouble responding just now. Please try sending your message again. 💗',

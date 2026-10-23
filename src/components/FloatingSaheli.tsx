@@ -66,7 +66,7 @@ export function FloatingSaheli() {
     return currentMessages
       .filter(m => !m.isError)
       .map(m => ({
-        role: m.role === 'saheli' ? 'assistant' : 'user',
+        role: (m.role === 'saheli' ? 'assistant' : 'user') as ConversationMessage['role'],
         content: m.text,
       }))
       .slice(-10);

@@ -164,10 +164,109 @@ function retrieveArticles(query: string): LearnArticle[] {
   return Array.from(matchedIds).map(id => getArticleById(id)).filter(Boolean) as LearnArticle[];
 }
 
+// Empathetic fallback response patterns for emotional support conversations
+// Used when the AI service is unavailable, so the chat still feels supportive
+const EMOTIONAL_PATTERNS: { keywords: string[]; responses: string[] }[] = [
+  {
+    keywords: ['listen', 'vent', 'someone to talk', 'need to talk', 'just want to talk'],
+    responses: [
+      "I'm here to listen, lovely. 💗 You don't have to make it sound neat or explain everything perfectly. Tell me what's on your mind.",
+      "I'm right here with you. Whatever you're feeling, this is a safe space to let it out. What's been going on? 🌷",
+    ],
+  },
+  {
+    keywords: ['overwhelmed', 'too much', 'can\'t cope', 'cant cope', 'drowning', 'everything at once'],
+    responses: [
+      "It sounds like you're carrying a lot right now, and that's completely valid. 💗 You don't have to figure everything out at once. What feels the heaviest right now?",
+      "When everything piles up, it's okay to just pause and breathe. You're not failing — you're human. Would it help to talk through what's on your plate, or do you just need a moment to be heard? 🫶",
+    ],
+  },
+  {
+    keywords: ['sad', 'low', 'down', 'depressed', 'unhappy', 'miserable', 'empty'],
+    responses: [
+      "I'm sorry today feels so heavy, lovely. 💗 You don't have to figure everything out right now. Do you want to tell me what's been going on, or would you prefer a little distraction?",
+      "It takes courage to say that. I'm here with you in this. Sometimes just naming how we feel is a small step forward. What's been pulling you down? 🌷",
+    ],
+  },
+  {
+    keywords: ['anxious', 'anxiety', 'worried', 'nervous', 'panic', 'stressed', 'stress'],
+    responses: [
+      "Anxiety can feel so overwhelming, like your mind won't switch off. 💗 You're not alone in this. Would it help to talk about what's making you anxious, or would you like a quick grounding exercise?",
+      "I hear you. Stress has a way of making everything feel urgent. Let's take a breath together. What's the thing that's worrying you most right now? 🌸",
+    ],
+  },
+  {
+    keywords: ['lonely', 'alone', 'no one', 'nobody', 'isolated', 'left out'],
+    responses: [
+      "Feeling lonely is one of the hardest things, and it doesn't mean you're unlovable. 💗 I'm here with you right now. Do you want to talk about what's making you feel this way?",
+      "You're not alone in feeling alone, if that makes sense. 🫶 I'm right here. Sometimes loneliness comes from feeling unseen — would you like to tell me more about what's happening?",
+    ],
+  },
+  {
+    keywords: ['useless', 'worthless', 'not good enough', 'failure', 'failed', 'failure', 'can\'t do anything', 'cant do anything', 'not enough'],
+    responses: [
+      "That result must hurt, especially if you were hoping for something different. But one moment doesn't define your intelligence or your future. 🫶 Do you want to talk about what happened, or shall we work out your next step together?",
+      "I hear you, and I want you to know — you are enough, exactly as you are. 💗 One setback doesn't erase everything you're capable of. What happened? I'm here to listen.",
+    ],
+  },
+  {
+    keywords: ['feel better', 'cheer up', 'sad and want', 'help me feel', 'having a bad day', 'rough day', 'tough day', 'bad day'],
+    responses: [
+      "I'm sorry today has been hard. 💗 Sometimes the bravest thing is just being gentle with yourself. Would you like to talk about it, or would a little distraction help?",
+      "Bad days don't make you a bad person. You're doing the best you can, and that's enough. 🌷 What would feel comforting right now — talking it through, or something to lift your spirits?",
+    ],
+  },
+  {
+    keywords: ['friend', 'fight', 'argument', 'betrayed', 'left out', 'bullied', 'ignored'],
+    responses: [
+      "Friendship problems can hurt so deeply because friends matter to us. 💗 Do you want to tell me what happened? I'm here to listen without judgment.",
+      "I'm sorry you're going through this. Relationships are complicated, and it's okay to feel hurt or confused. What happened between you? 🌸",
+    ],
+  },
+  {
+    keywords: ['exam', 'college', 'study', 'work stress', 'deadline', 'pressure', 'grades', 'test'],
+    responses: [
+      "That pressure sounds really intense. 💗 Remember that your worth isn't tied to one exam or one deadline. Would you like to talk through what's stressing you, or brainstorm some ways to manage it?",
+      "It's completely understandable to feel stressed about this. What would help most right now — talking it out, or coming up with a small plan together? 🌷",
+    ],
+  },
+  {
+    keywords: ['body image', 'ugly', 'fat', 'thin', 'appearance', 'look', 'hate my body', 'insecure'],
+    responses: [
+      "I hear you, and I want you to know — your body deserves kindness, not criticism. 💗 The way you look is the smallest part of who you are. What's been making you feel this way?",
+      "Body image struggles are so common and so painful. You are worthy exactly as you are. 🫶 Would you like to talk about what's been bothering you?",
+    ],
+  },
+  {
+    keywords: ['tired', 'exhausted', 'burnt out', 'burnout', 'no energy', 'drained'],
+    responses: [
+      "It sounds like you're running on empty, lovely. 💗 Rest isn't a reward — it's a need. What's been draining you the most?",
+      "Being that tired is your body asking for care. You're allowed to rest without earning it first. 🌸 Would you like to talk about what's been wearing you out?",
+    ],
+  },
+];
+
+function matchEmotionalResponse(query: string): string | null {
+  const q = query.toLowerCase();
+  for (const pattern of EMOTIONAL_PATTERNS) {
+    if (pattern.keywords.some(k => q.includes(k))) {
+      return pattern.responses[Math.floor(Math.random() * pattern.responses.length)];
+    }
+  }
+  return null;
+}
+
 function buildFallbackResponse(query: string): string {
+  // Try emotional support patterns first
+  const emotionalReply = matchEmotionalResponse(query);
+  if (emotionalReply) {
+    return emotionalReply;
+  }
+
+  // Then try article-based responses
   const matchedArticles = retrieveArticles(query);
   if (matchedArticles.length === 0) {
-    return "I'm not sure I have enough information to answer that well right now, lovely. 💗 Could you try rephrasing, or explore the Learning Hub for curated articles? I'm here whenever you need me.";
+    return "I'm here for you, lovely. 💗 I might not have the perfect answer right now, but I'm always happy to listen. Could you tell me a little more about what's on your mind, or try exploring the Learning Hub for helpful articles?";
   }
 
   const primary = matchedArticles[0];
@@ -246,14 +345,15 @@ async function callAI(
     body: JSON.stringify({ messages: apiMessages }),
   });
 
-  if (!response.ok) {
-    throw new Error(`AI service returned ${response.status}`);
-  }
-
   const data = await response.json();
 
+  // The edge function returns a `reply` field even in error responses (503, 502)
   if (data.reply && typeof data.reply === 'string') {
     return data.reply;
+  }
+
+  if (!response.ok) {
+    throw new Error(`AI service returned ${response.status}`);
   }
 
   throw new Error('AI service returned no reply');
