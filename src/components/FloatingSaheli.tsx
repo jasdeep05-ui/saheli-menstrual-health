@@ -1,10 +1,10 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useApp } from '../lib/app-context';
 import { GirlIllustration } from './GirlIllustration';
-import { getSaheliResponse, SUGGESTED_QUESTIONS, type SaheliResponse } from '../lib/saheli-ai';
+import { getSaheliResponse, type SaheliResponse } from '../lib/saheli-ai';
 import { getArticleById } from '../lib/content';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { AlertTriangle, Send, ExternalLink, BookOpen, Shield, X } from 'lucide-react';
+import { AlertTriangle, Send, ExternalLink, BookOpen, X } from 'lucide-react';
 
 interface ChatMessage {
   role: 'user' | 'saheli';
@@ -28,11 +28,19 @@ export function FloatingSaheli() {
   const panelRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
 
+  const FLOATING_GREETING = 'Hi, lovely! \u{1F497} What would you like to ask me?';
+  const FLOATING_SUGGESTIONS = [
+    'Why am I having cramps?',
+    'How can I manage period discomfort?',
+    'Is my cycle regular?',
+    'When should I seek medical help?',
+  ];
+
   useEffect(() => {
     if (open && messages.length === 0) {
-      setMessages([{ role: 'saheli', text: t('askIntro') }]);
+      setMessages([{ role: 'saheli', text: FLOATING_GREETING }]);
     }
-  }, [open, messages.length, t]);
+  }, [open, messages.length]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -90,14 +98,14 @@ export function FloatingSaheli() {
         onFocus={() => setShowTooltip(true)}
         onBlur={() => setShowTooltip(false)}
         className="group fixed bottom-20 right-4 z-40 lg:bottom-6 lg:right-6 transition-transform hover:scale-105 active:scale-95"
-        aria-label={open ? 'Close Ask Saheli chat' : 'Open Ask Saheli chat'}
+        aria-label={open ? 'Close Ask Saheli AI chat' : 'Open Ask Saheli AI chat'}
         aria-expanded={open}
         aria-haspopup="dialog"
       >
         {/* Tooltip */}
         {showTooltip && !open && (
           <span className="pointer-events-none absolute bottom-full right-0 mb-2 whitespace-nowrap rounded-lg bg-plum-700 px-3 py-1.5 text-xs font-medium text-white shadow-float animate-fade-in">
-            Ask Saheli
+            Ask Saheli AI
           </span>
         )}
 
@@ -121,7 +129,7 @@ export function FloatingSaheli() {
             ref={panelRef}
             role="dialog"
             aria-modal="true"
-            aria-label="Ask Saheli chat"
+            aria-label="Ask Saheli AI chat"
             className="fixed inset-x-0 bottom-0 z-50 flex max-h-[75vh] flex-col rounded-t-3xl border border-cream-200 bg-white shadow-float animate-slide-up lg:bottom-6 lg:right-6 lg:left-auto lg:w-96 lg:max-h-[600px] lg:rounded-3xl"
           >
             {/* Header */}
@@ -131,7 +139,7 @@ export function FloatingSaheli() {
                   <GirlIllustration size={28} />
                 </div>
                 <div>
-                  <h2 className="font-display text-base font-semibold text-plum-700">Ask Saheli</h2>
+                  <h2 className="font-display text-base font-semibold text-plum-700">Ask Saheli AI</h2>
                   <p className="text-[10px] text-plum-300">Your health companion</p>
                 </div>
               </div>
@@ -145,10 +153,7 @@ export function FloatingSaheli() {
             </div>
 
             {/* Disclaimer */}
-            <div className="flex items-start gap-1.5 bg-cream-100 px-4 py-2">
-              <Shield size={14} className="mt-0.5 flex-shrink-0 text-plum-400" />
-              <p className="text-[10px] leading-relaxed text-plum-400">{t('askDisclaimer')}</p>
-            </div>
+
 
             {/* Messages */}
             <div className="flex-1 space-y-3 overflow-y-auto px-4 py-3">
@@ -217,7 +222,7 @@ export function FloatingSaheli() {
               <div className="px-4 pb-2">
                 <p className="mb-1.5 text-[10px] font-medium text-plum-400">Try asking:</p>
                 <div className="flex flex-wrap gap-1.5">
-                  {SUGGESTED_QUESTIONS.slice(0, 4).map((q, i) => (
+                  {FLOATING_SUGGESTIONS.map((q, i) => (
                     <button key={i} onClick={() => handleSend(q)}
                       className="rounded-full border border-cream-300 bg-white px-2.5 py-1 text-[10px] text-plum-500 transition-all hover:border-coral-300 hover:bg-coral-50">
                       {q}
