@@ -43,6 +43,13 @@ export const translations = {
     onbRemindersDesc: 'Optional, discreet notifications. You can change this anytime.',
     onbFinish: 'Start using Saheli',
 
+    // Onboarding — Age
+    onbAgeTitle: 'How old are you?',
+    onbAgeDesc: 'This helps Saheli give you age-appropriate guidance. You can change this later in Settings.',
+    onbAgeMinor: 'Under 18',
+    onbAgeAdult: '18 or older',
+    onbAgePreferNot: 'Prefer not to say',
+
     // Home
     homeWelcome: 'Welcome back',
     homeCycleDay: 'Cycle Day',
@@ -112,6 +119,17 @@ export const translations = {
     sympFrequency: 'Symptom frequency',
     sympPainHistory: 'Pain level history',
     sympMoodTrends: 'Mood trends',
+
+    // Symptom form — optional red-flag questions
+    sympRedFlagSection: 'Optional questions (helps with health guidance)',
+    sympYes: 'Yes',
+    sympNo: 'No',
+    sympImpactsDailyLife: 'Did pain stop you from doing daily activities?',
+    sympBleedingBetween: 'Did you notice bleeding between periods or after sex?',
+    sympClots: 'Did you pass clots larger than a ₹10 coin?',
+    sympPadChange: 'How often did you need to change your pad/tampon?',
+    sympPadChangeNormal: 'Every 3-4 hours or less',
+    sympPadChangeFrequent: 'Every 1-2 hours',
 
     // Mood labels
     moodGreat: 'Great',
@@ -232,6 +250,7 @@ export const translations = {
     helpSgSeeDoctor: 'Consider seeing a doctor if:',
     helpSgUrgentCare: 'Seek urgent care if:',
     helpSgDownload: 'Create summary for a healthcare appointment',
+    helpSeeDoctor: 'When to see a doctor',
 
     // Help — Find support
     helpFsEssentialsT: 'Find Nearby Period Essentials',
@@ -326,6 +345,91 @@ export const translations = {
     symBreastTenderness: 'Breast tenderness',
     symBackPain: 'Back pain',
     symOther: 'Other',
+
+    // When to See a Doctor — screen
+    rfScreenTitle: 'When to See a Doctor',
+    rfScreenIntro: 'This screen reviews your logged period and symptom data for patterns that may benefit from medical advice. These are observations from your logs, not a diagnosis. Many flagged patterns have common, treatable causes. Always consult a healthcare professional for personal advice.',
+    rfScreenDisclaimer: 'This guidance is educational only. It does not diagnose any condition and cannot replace professional medical advice.',
+    rfNoFlags: 'No patterns needing attention were found in your logged data.',
+    rfNoFlagsDesc: 'This does not mean nothing is wrong. If you feel something is not right, trust your instincts and consult a healthcare professional.',
+    rfFlaggedPatterns: 'Patterns noticed in your logs',
+    rfRoutineAdvice: 'Consider discussing with a healthcare professional.',
+    rfUrgentAdvice: 'Consider seeking medical attention soon.',
+    rfBasedOnIncompleteInfo: 'This assessment is based on incomplete information because your age group is not set. Consider adding it in onboarding for more accurate thresholds.',
+    rfDatesLabel: 'Related dates',
+    rfDetailLabel: 'Detail',
+    rfSeverityRoutine: 'Routine',
+    rfSeverityUrgent: 'Urgent',
+
+    // Red-flag card texts — rule 1: long bleeding
+    rfLongBleedingTitle: 'Period lasting more than 7 days',
+    rfLongBleedingDesc: 'Your log shows a period that lasted more than 7 days. While occasional long periods can be normal, consistently long periods may benefit from medical advice to rule out common causes.',
+    rfLongBleedingAction: 'Consider discussing this with a healthcare professional, especially if it happens repeatedly.',
+
+    // Red-flag card texts — rule 2: heavy bleeding
+    rfHeavyFlowTitle: 'Heavy flow recorded',
+    rfHeavyFlowDesc: 'You logged a heavy flow period. Heavy flow can be normal for some people, but if it happens often or affects your daily life, it may be worth discussing with a doctor.',
+    rfHeavyFlowAction: 'Consider tracking how often this happens and discussing it with a healthcare professional.',
+    rfClotsTitle: 'Blood clots logged',
+    rfClotsDesc: 'You reported passing clots larger than a ₹10 coin. Occasional small clots can be normal, but large clots may warrant medical advice.',
+    rfClotsAction: 'Consider discussing this with a healthcare professional, especially if it happens regularly.',
+    rfPadChangeTitle: 'Frequent pad/tampon changes',
+    rfPadChangeDesc: 'You reported needing to change your pad or tampon every 1-2 hours. This may indicate heavier bleeding than usual and is worth discussing with a doctor.',
+    rfPadChangeAction: 'Consider seeking medical advice, especially if this happens with every period.',
+
+    // Red-flag card texts — rule 3: irregular cycles
+    rfIrregularCyclesTitle: 'Irregular cycle lengths',
+    rfIrregularCyclesShortDesc: 'Your logs show 3 consecutive cycles shorter than 21 days. Cycles this short may be worth discussing with a healthcare professional.',
+    rfIrregularCyclesLongDesc: 'Your logs show 3 consecutive cycles longer than the expected range. Longer cycles can have many causes and may benefit from medical advice.',
+    rfIrregularCyclesAction: 'Consider discussing your cycle pattern with a healthcare professional.',
+
+    // Red-flag card texts — rule 4: no period
+    rfNoPeriodTitle: 'No period for 90 days',
+    rfNoPeriodDesc: 'Your last recorded period was more than 90 days ago. If pregnancy is not known or suspected, consider discussing this with a healthcare professional.',
+    rfNoPeriodAction: 'Consider seeking medical advice, especially if you are not pregnant or trying to conceive.',
+
+    // Red-flag card texts — rule 5: bleeding between periods
+    rfBleedingBetweenTitle: 'Bleeding between periods or after sex',
+    rfBleedingBetweenDesc: 'You logged bleeding between periods or after sex. This can have many causes and is worth discussing with a healthcare professional.',
+    rfBleedingBetweenAction: 'Consider seeking medical advice to understand the cause.',
+
+    // Red-flag card texts — rule 6: severe pain
+    rfSeverePainTitle: 'Severe pain recorded',
+    rfSeverePainDesc: 'You logged a pain level of 9 or 10 out of 10. Pain this severe, especially if it is not helped by usual pain relief, may warrant prompt medical attention.',
+    rfSeverePainAction: 'Consider seeking medical attention soon if the pain is ongoing or worsening.',
+    rfPainImpactsTitle: 'Pain affecting daily activities',
+    rfPainImpactsDesc: 'You reported that pain stopped you from doing daily activities. Pain that regularly interferes with your life may benefit from medical advice.',
+    rfPainImpactsAction: 'Consider discussing this with a healthcare professional.',
+
+    // Red-flag card texts — rule 7: heavy bleeding + anemia signs
+    rfHeavyBleedingAnemiaTitle: 'Heavy bleeding with tiredness, dizziness, or breathlessness',
+    rfHeavyBleedingAnemiaDesc: 'You have logged heavy bleeding along with symptoms like tiredness, dizziness, or breathlessness. This combination may indicate significant blood loss and should be assessed promptly.',
+    rfHeavyBleedingAnemiaAction: 'Consider seeking medical attention soon. These symptoms together should not be ignored.',
+
+    // Static warnings (cannot be detected from logs)
+    rfStaticWarningsTitle: 'Signs that logs cannot detect',
+    rfStaticWarningsDesc: 'These important signs cannot be assessed from period logs alone. If any apply to you, please consult a healthcare professional.',
+    rfStaticFirstPeriodTitle: 'No first period by age 15',
+    rfStaticFirstPeriodDesc: 'If you have not had your first period by age 15, it is a good idea to consult a healthcare professional. This cannot be detected from your logs.',
+    rfStaticSuddenChangeTitle: 'Sudden change after years of regular periods',
+    rfStaticSuddenChangeDesc: 'If your periods suddenly become much different after being regular for years, seek medical advice. Logs may not always catch this clearly.',
+    rfStaticPostMenopauseTitle: 'Bleeding after menopause',
+    rfStaticPostMenopauseDesc: 'Any bleeding after menopause should be assessed by a healthcare professional. Logs cannot determine this.',
+
+    // Urgent warnings
+    rfUrgentWarningsTitle: 'When to seek urgent care',
+    rfUrgentWarningsDesc: 'If you experience any of these, seek urgent medical attention. Do not wait — these need prompt assessment.',
+    rfUrgentFaintingTitle: 'Fainting or feeling like you might faint',
+    rfUrgentFaintingDesc: 'Fainting during or between periods, or feeling you might faint, may indicate significant blood loss or other serious causes. Seek urgent care.',
+    rfUrgentSeverePainTitle: 'Severe or worsening pain',
+    rfUrgentSeverePainDesc: 'Pain that is sudden, severe, worsening, or very different from your usual period pain should be assessed urgently.',
+    rfUrgentHeavyBleedingDizzinessTitle: 'Heavy bleeding with dizziness or breathlessness',
+    rfUrgentHeavyBleedingDizzinessDesc: 'Heavy bleeding together with dizziness, breathlessness, or feeling faint may indicate significant blood loss. Seek urgent care.',
+
+    // Prepare for visit
+    rfPrepareVisit: 'Prepare for my visit',
+    rfPrintSummary: 'Print / Save summary',
+    rfPrintInstructions: 'This opens your browser print dialog. You can print it or save as PDF. Only your logged data is included — nothing is uploaded.',
   },
 
   hi: {
@@ -362,6 +466,13 @@ export const translations = {
     onbReminders: 'कोमल रिमाइंडर चालू करें?',
     onbRemindersDesc: 'वैकल्पिक, सावधान नोटिफिकेशन। आप इसे कभी भी बदल सकते हैं।',
     onbFinish: 'Saheli का उपयोग शुरू करें',
+
+    // Onboarding — Age
+    onbAgeTitle: 'आपकी उम्र क्या है?',
+    onbAgeDesc: 'यह Saheli को आयु-उपयुक्त मार्गदर्शन देने में मदद करता है। आप इसे बाद में सेटिंग्स में बदल सकते हैं।',
+    onbAgeMinor: '18 वर्ष से कम',
+    onbAgeAdult: '18 या अधिक',
+    onbAgePreferNot: 'नहीं बताना चाहती',
 
     homeWelcome: 'वापसी पर स्वागत है',
     homeCycleDay: 'चक्र दिन',
@@ -429,6 +540,17 @@ export const translations = {
     sympFrequency: 'लक्षण आवृत्ति',
     sympPainHistory: 'दर्द स्तर इतिहास',
     sympMoodTrends: 'मूड रुझान',
+
+    // Symptom form — optional red-flag questions
+    sympRedFlagSection: 'वैकल्पिक प्रश्न (स्वास्थ्य मार्गदर्शन में मदद करता है)',
+    sympYes: 'हां',
+    sympNo: 'नहीं',
+    sympImpactsDailyLife: 'क्या दर्द ने आपको दैनिक गतिविधियां करने से रोका?',
+    sympBleedingBetween: 'क्या आपको अवधियों के बीच या संभोग के बाद रक्तस्राव दिखा?',
+    sympClots: 'क्या आपने ₹10 के सिक्के से बड़े थक्के पास किए?',
+    sympPadChange: 'आपको कितनी बार पैड/टैम्पन बदलना पड़ा?',
+    sympPadChangeNormal: 'हर 3-4 घंटे या कम',
+    sympPadChangeFrequent: 'हर 1-2 घंटे',
 
     moodGreat: 'उत्कृष्ट',
     moodGood: 'अच्छा',
@@ -542,6 +664,7 @@ export const translations = {
     helpSgSeeDoctor: 'चिकित्सक से मिलने पर विचार करें यदि:',
     helpSgUrgentCare: 'आपातकालीन देखभाल के लिए जाएं यदि:',
     helpSgDownload: 'चिकित्सक अपॉइंटमेंट के लिए सारांश बनाएं',
+    helpSeeDoctor: 'चिकित्सक को कब दिखाएं',
 
     // Help — Find support
     helpFsEssentialsT: 'पास में मासिक उत्पाद खोजें',
@@ -633,6 +756,91 @@ export const translations = {
     symBreastTenderness: 'स्तन कोमलता',
     symBackPain: 'पीठ दर्द',
     symOther: 'अन्य',
+
+    // When to See a Doctor — screen
+    rfScreenTitle: 'चिकित्सक को कब दिखाएं',
+    rfScreenIntro: 'यह स्क्रीन आपके लॉग किए गए अवधि और लक्षण डेटा में ऐसे पैटर्न की जांच करती है जिनके लिए चिकित्सीय सलाह फायदेमंद हो सकती है। ये आपके लॉग से अवलोकन हैं, निदान नहीं। कई चिह्नित पैटर्न के सामान्य, उपचार योग्य कारण होते हैं। व्यक्तिगत सलाह के लिए हमेशा चिकित्सक से परामर्श करें।',
+    rfScreenDisclaimer: 'यह मार्गदर्शन केवल शैक्षिक है। यह किसी भी स्थिति का निदान नहीं करता और पेशेवर चिकित्सा सलाह का विकल्प नहीं हो सकता।',
+    rfNoFlags: 'आपके लॉग किए गए डेटा में ध्यान देने योग्य कोई पैटर्न नहीं मिला।',
+    rfNoFlagsDesc: 'इसका मतलब यह नहीं कि कुछ गलत नहीं है। यदि आप महसूस करती हैं कि कुछ ठीक नहीं है, तो अपनी सहज ज्ञान पर भरोसा करें और चिकित्सक से परामर्श करें।',
+    rfFlaggedPatterns: 'आपके लॉग में दिखे पैटर्न',
+    rfRoutineAdvice: 'चिकित्सक से चर्चा करने पर विचार करें।',
+    rfUrgentAdvice: 'शीघ्र चिकित्सकीय सहायता लेने पर विचार करें।',
+    rfBasedOnIncompleteInfo: 'यह मूल्यांकन अपूर्ण जानकारी पर आधारित है क्योंकि आपकी आयु वर्ग सेट नहीं है। अधिक सटीक सीमाओं के लिए ऑनबोर्डिंग में इसे जोड़ने पर विचार करें।',
+    rfDatesLabel: 'संबंधित तिथियां',
+    rfDetailLabel: 'विवरण',
+    rfSeverityRoutine: 'नियमित',
+    rfSeverityUrgent: 'आपातकालीन',
+
+    // Red-flag card texts — rule 1
+    rfLongBleedingTitle: '7 दिन से अधिक चलने वाली अवधि',
+    rfLongBleedingDesc: 'आपका लॉग एक ऐसी अवधि दिखाता है जो 7 दिन से अधिक चली। हालांकि कभी-कभी लंबी अवधि सामान्य हो सकती है, लगातार लंबी अवधियों के लिए चिकित्सकीय सलाह फायदेमंद हो सकती है।',
+    rfLongBleedingAction: 'चिकित्सक से इस पर चर्चा करने पर विचार करें, खासकर यदि यह बार-बार होता है।',
+
+    // Red-flag card texts — rule 2
+    rfHeavyFlowTitle: 'भारी फ्लो दर्ज',
+    rfHeavyFlowDesc: 'आपने भारी फ्लो की अवधि लॉग की। भारी फ्लो कुछ लोगों के लिए सामान्य हो सकता है, लेकिन यदि यह अक्सर होता है या आपके दैनिक जीवन को प्रभावित करता है, तो चिकित्सक से चर्चा करना उपयोगी हो सकता है।',
+    rfHeavyFlowAction: 'इसके कितनी बार होता है, इस पर नज़र रखें और चिकित्सक से चर्चा करें।',
+    rfClotsTitle: 'रक्त थक्के लॉग किए',
+    rfClotsDesc: 'आपने ₹10 के सिक्के से बड़े थक्के पास करने की रिपोर्ट की। कभी-कभी छोटे थक्के सामान्य हो सकते हैं, लेकिन बड़े थक्कों के लिए चिकित्सकीय सलाह लेना उचित है।',
+    rfClotsAction: 'चिकित्सक से चर्चा करें, खासकर यदि यह नियमित रूप से होता है।',
+    rfPadChangeTitle: 'बार-बार पैड/टैम्पन बदलना',
+    rfPadChangeDesc: 'आपने हर 1-2 घंटे में पैड या टैम्पन बदलने की आवश्यकता की रिपोर्ट की। यह सामान्य से अधिक रक्तस्राव का संकेत हो सकता है और चिकित्सक से चर्चा करना उपयोगी है।',
+    rfPadChangeAction: 'चिकित्सकीय सलाह लेने पर विचार करें, खासकर यदि यह हर अवधि में होता है।',
+
+    // Red-flag card texts — rule 3
+    rfIrregularCyclesTitle: 'अनियमित चक्र लंबाई',
+    rfIrregularCyclesShortDesc: 'आपके लॉग 3 लगातार चक्र दिखाते हैं जो 21 दिन से छोटे हैं। इतने छोटे चक्रों के लिए चिकित्सक से चर्चा करना उपयुक्त हो सकता है।',
+    rfIrregularCyclesLongDesc: 'आपके लॉग 3 लगातार चक्र दिखाते हैं जो अपेक्षित सीमा से अधिक लंबे हैं। लंबे चक्रों के कई कारण हो सकते हैं और चिकित्सकीय सलाह फायदेमंद हो सकती है।',
+    rfIrregularCyclesAction: 'अपने चक्र पैटर्न को चिकित्सक से चर्चा करें।',
+
+    // Red-flag card texts — rule 4
+    rfNoPeriodTitle: '90 दिन से कोई अवधि नहीं',
+    rfNoPeriodDesc: 'आपकी अंतिम दर्ज अवधि 90 दिन से अधिक पहले थी। यदि गर्भावस्था ज्ञात या संदिग्ध नहीं है, तो चिकित्सक से चर्चा करने पर विचार करें।',
+    rfNoPeriodAction: 'चिकित्सकीय सलाह लेने पर विचार करें, खासकर यदि आप गर्भवती नहीं हैं या गर्भधारण का प्रयास नहीं कर रही हैं।',
+
+    // Red-flag card texts — rule 5
+    rfBleedingBetweenTitle: 'अवधियों के बीच या संभोग के बाद रक्तस्राव',
+    rfBleedingBetweenDesc: 'आपने अवधियों के बीच या संभोग के बाद रक्तस्राव लॉग किया। इसके कई कारण हो सकते हैं और चिकित्सक से चर्चा करना उपयोगी है।',
+    rfBleedingBetweenAction: 'कारण को समझने के लिए चिकित्सकीय सलाह लेने पर विचार करें।',
+
+    // Red-flag card texts — rule 6
+    rfSeverePainTitle: 'गंभीर दर्द दर्ज',
+    rfSeverePainDesc: 'आपने 10 में से 9 या 10 दर्द स्तर लॉग किया। इतना गंभीर दर्द, खासकर यदि सामान्य दर्द निवारक से नहीं ठीक होता, तो शीघ्र चिकित्सकीय ध्यान आवश्यक हो सकता है।',
+    rfSeverePainAction: 'यदि दर्द जारी है या बढ़ रहा है तो शीघ्र चिकित्सकीय सहायता लेने पर विचार करें।',
+    rfPainImpactsTitle: 'दैनिक गतिविधियों को प्रभावित करने वाला दर्द',
+    rfPainImpactsDesc: 'आपने बताया कि दर्द ने आपको दैनिक गतिविधियां करने से रोका। नियमित रूप से जीवन में हस्तक्षेप करने वाला दर्द चिकित्सकीय सलाह से लाभ उठा सकता है।',
+    rfPainImpactsAction: 'चिकित्सक से इस पर चर्चा करने पर विचार करें।',
+
+    // Red-flag card texts — rule 7
+    rfHeavyBleedingAnemiaTitle: 'थकान, चक्कर, या सांस फूलने के साथ भारी रक्तस्राव',
+    rfHeavyBleedingAnemiaDesc: 'आपने भारी रक्तस्राव के साथ थकान, चक्कर, या सांस फूलने जैसे लक्षण लॉग किए हैं। यह संयोजन महत्वपूर्ण रक्त हानि का संकेत हो सकता है और इसकी शीघ्र जांच होनी चाहिए।',
+    rfHeavyBleedingAnemiaAction: 'शीघ्र चिकित्सकीय सहायता लेने पर विचार करें। इन लक्षणों को नज़रअंदाज़ नहीं करना चाहिए।',
+
+    // Static warnings
+    rfStaticWarningsTitle: 'ऐसे संकेत जिन्हें लॉग से पहचाना नहीं जा सकता',
+    rfStaticWarningsDesc: 'ये महत्वपूर्ण संकेत केवल अवधि लॉग से नहीं पहचाने जा सकते। यदि इनमें से कोई भी लागू होता है, तो चिकित्सक से परामर्श करें।',
+    rfStaticFirstPeriodTitle: '15 वर्ष की आयु तक कोई पहली अवधि नहीं',
+    rfStaticFirstPeriodDesc: 'यदि आपको 15 वर्ष की आयु तक पहली अवधि नहीं आई, तो चिकित्सक से संपर्क करें। इसे आपके लॉग से पहचाना नहीं जा सकता।',
+    rfStaticSuddenChangeTitle: 'वर्षों के नियमित चक्रों के बाद अचानक बदलाव',
+    rfStaticSuddenChangeDesc: 'यदि आपकी अवधियां वर्षों के नियमित होने के बाद अचानक बहुत अलग हो जाती हैं, तो चिकित्सकीय सलाह लें। लॉग इसे हमेशा स्पष्ट रूप से नहीं पकड़ सकते।',
+    rfStaticPostMenopauseTitle: 'रजोनिवृत्ति के बाद रक्तस्राव',
+    rfStaticPostMenopauseDesc: 'रजोनिवृत्ति के बाद कोई भी रक्तस्राव चिकित्सक द्वारा जांचा जाना चाहिए। लॉग इसे निर्धारित नहीं कर सकते।',
+
+    // Urgent warnings
+    rfUrgentWarningsTitle: 'आपातकालीन सहायता कब लें',
+    rfUrgentWarningsDesc: 'यदि आप इनमें से कोई भी अनुभव करती हैं, तो आपातकालीन चिकित्सकीय सहायता लें। प्रतीक्षा न करें — इनके लिए तत्काल जांच आवश्यक है।',
+    rfUrgentFaintingTitle: 'बेहोशी या बेहोशी जैसा महसूस होना',
+    rfUrgentFaintingDesc: 'अवधि के दौरान या बीच में बेहोश होना, या ऐसा महसूस होना, महत्वपूर्ण रक्त हानि या अन्य गंभीर कारणों का संकेत हो सकता है। आपातकालीन सहायता लें।',
+    rfUrgentSeverePainTitle: 'गंभीर या बढ़ता दर्द',
+    rfUrgentSeverePainDesc: 'दर्द जो अचानक, गंभीर, बढ़ता, या आपके सामान्य अवधि दर्द से बहुत अलग है, उसकी तत्काल जांच होनी चाहिए।',
+    rfUrgentHeavyBleedingDizzinessTitle: 'चक्कर या सांस फूलने के साथ भारी रक्तस्राव',
+    rfUrgentHeavyBleedingDizzinessDesc: 'भारी रक्तस्राव के साथ चक्कर, सांस फूलना, या बेहोशी महत्वपूर्ण रक्त हानि का संकेत हो सकता है। आपातकालीन सहायता लें।',
+
+    // Prepare for visit
+    rfPrepareVisit: 'मेरी अपॉइंटमेंट की तैयारी करें',
+    rfPrintSummary: 'सारांश प्रिंट / सेव करें',
+    rfPrintInstructions: 'यह आपके ब्राउज़र प्रिंट डायलॉग को खोलता है। आप इसे प्रिंट कर सकती हैं या PDF के रूप में सेव कर सकती हैं। केवल आपका लॉग किया गया डेटा शामिल है — कुछ भी अपलोड नहीं होता।',
   },
 } as const;
 

@@ -1,15 +1,16 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useApp } from '../lib/app-context';
 import { useNavigate } from 'react-router-dom';
 import { getSymptomGuidance, type SymptomGuidance } from '../lib/saheli-ai';
 import { generateSymptomSummary } from '../lib/cycle';
-import { ChevronDown, AlertTriangle, Stethoscope, Package, ShowerHead, MapPin, MessageSquare, Download, Check, Navigation } from 'lucide-react';
+import { evaluateRedFlags, STATIC_WARNINGS, URGENT_WARNINGS, generateVisitSummary, type RedFlag } from '../lib/redflags';
+import { ChevronDown, AlertTriangle, Stethoscope, Package, ShowerHead, MapPin, MessageSquare, Download, Check, Navigation, Printer, HeartPulse } from 'lucide-react';
 import { format } from 'date-fns';
 
-type Section = 'unexpected' | 'emergencyKit' | 'hygiene' | 'findSupport' | 'talkAbout' | 'symptomGuidance';
+type Section = 'unexpected' | 'emergencyKit' | 'hygiene' | 'findSupport' | 'talkAbout' | 'symptomGuidance' | 'seeDoctor';
 
 export function Help() {
-  const { t, periods, symptoms } = useApp();
+  const { t, periods, symptoms, onboarding } = useApp();
   const [section, setSection] = useState<Section>('unexpected');
 
   const sections: { id: Section; label: string; icon: React.ReactNode }[] = [
@@ -17,6 +18,7 @@ export function Help() {
     { id: 'emergencyKit', label: t('helpEmergencyKit'), icon: <Package size={18} /> },
     { id: 'hygiene', label: t('helpHygiene'), icon: <ShowerHead size={18} /> },
     { id: 'symptomGuidance', label: t('helpSymptomGuidance'), icon: <Stethoscope size={18} /> },
+    { id: 'seeDoctor', label: t('helpSeeDoctor'), icon: <HeartPulse size={18} /> },
     { id: 'findSupport', label: t('helpFindSupport'), icon: <MapPin size={18} /> },
     { id: 'talkAbout', label: t('helpTalkAbout'), icon: <MessageSquare size={18} /> },
   ];
@@ -43,6 +45,7 @@ export function Help() {
       {section === 'emergencyKit' && <EmergencyKit />}
       {section === 'hygiene' && <HygieneSection />}
       {section === 'symptomGuidance' && <SymptomGuidanceSection periods={periods} symptoms={symptoms} />}
+      {section === 'seeDoctor' && <SeeDoctorSection periods={periods} symptoms={symptoms} onboarding={onboarding} />}
       {section === 'findSupport' && <FindSupport />}
       {section === 'talkAbout' && <TalkAboutSection />}
     </div>
@@ -289,6 +292,144 @@ function TalkAboutSection() {
           <p className="mt-2 text-xs text-plum-400">{g.tip}</p>
         </div>
       ))}
+    </div>
+  );
+}
+
+function SeeDoctorSection({ periods, symptoms, onboarding }: {
+  periods: import('../types').PeriodEntry[];
+  symptoms: import('../types').SymptomEntry[];
+  onboarding: import('../types').OnboardingPrefs;
+}) {
+  const { t, lang } = useApp();
+  const flags = evaluateRedFlags({ periods, symptoms, onboarding });
+
+  const handlePrint = useCallback(() => {
+    const summary = generateVisitSummary(periods, symptoms, flags, lang);
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) return;
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>${t('rfScreenTitle')} — Saheli</title>
+          <style>
+            body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 700px; margin: 40px auto; padding: 20px; color: #333; line-height: 1.5; }
+            h1 { font-size: 20px; margin-bottom: 4px; }
+            .meta { color: #666; font-size: 13px; margin-bottom: 20px; }
+            .section { margin-bottom: 20px; }
+            .section h2 { font-size: 15px; border-bottom: 1px solid #ddd; padding-bottom: 4px; margin-bottom: 8px; }
+            .disclaimer { font-size: 12px; color: #666; margin-bottom: 20px; font-style: italic; }
+            .flag { margin-bottom: 10px; padding: 8px 12px; background: #f9f5f5; border-radius: 6px; }
+            .flag .sev { font-weight: bold; font-size: 12px; }
+            .flag .sev.urgent { color: #c0392b; }
+            .flag .sev.routine { color: #7d6b7d; }
+            pre { white-space: pre-wrap; font-family: inherit; font-size: 13px; }
+            @media print { body { margin: 20px; } }
+          </style>
+        </head>
+        <body>
+          <h1>Saheli — ${t('rfScreenTitle')}</h1>
+          <div class="meta">${new Date().toLocaleDateString(lang === 'hi' ? 'hi-IN' : 'en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
+          <p class="disclaimer">${t('rfScreenDisclaimer')}</p>
+          <pre>${summary}</pre>
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
+    printWindow.focus();
+    setTimeout(() => printWindow.print(), 300);
+  }, [periods, symptoms, flags, lang, t]);
+
+  return (
+    <div className="space-y-4 animate-fade-in">
+      <div className="card p-5">
+        <h2 className="mb-3 font-display text-lg font-semibold text-plum-700">{t('rfScreenTitle')}</h2>
+        <p className="text-sm leading-relaxed text-plum-500">{t('rfScreenIntro')}</p>
+        <p className="mt-3 text-xs text-plum-300">{t('rfScreenDisclaimer')}</p>
+      </div>
+
+      <div className="card p-5">
+        <h3 className="mb-3 text-sm font-semibold text-plum-600">{t('rfFlaggedPatterns')}</h3>
+        {flags.length === 0 ? (
+          <div className="rounded-xl bg-cream-50 p-4">
+            <p className="text-sm text-plum-500">{t('rfNoFlags')}</p>
+            <p className="mt-1 text-xs text-plum-400">{t('rfNoFlagsDesc')}</p>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {flags.map(flag => (
+              <RedFlagCard key={flag.id} flag={flag} t={t} />
+            ))}
+          </div>
+        )}
+      </div>
+
+      <div className="card p-5">
+        <h3 className="mb-3 text-sm font-semibold text-plum-600">{t('rfStaticWarningsTitle')}</h3>
+        <p className="mb-3 text-sm text-plum-400">{t('rfStaticWarningsDesc')}</p>
+        <div className="space-y-3">
+          {STATIC_WARNINGS.map(w => (
+            <div key={w.id} className="rounded-xl border border-cream-200 bg-cream-50 p-4">
+              <h4 className="text-sm font-semibold text-plum-600">{t(w.titleKey as never)}</h4>
+              <p className="mt-1 text-sm text-plum-400">{t(w.descriptionKey as never)}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="rounded-xl border border-coral-200 bg-blush-100 p-5">
+        <h3 className="mb-2 flex items-center gap-2 text-sm font-semibold text-coral-600">
+          <AlertTriangle size={18} />
+          {t('rfUrgentWarningsTitle')}
+        </h3>
+        <p className="mb-3 text-sm text-coral-600">{t('rfUrgentWarningsDesc')}</p>
+        <div className="space-y-3">
+          {URGENT_WARNINGS.map(w => (
+            <div key={w.id} className="rounded-lg bg-white/60 p-3">
+              <h4 className="text-sm font-semibold text-coral-700">{t(w.titleKey as never)}</h4>
+              <p className="mt-1 text-sm text-coral-600">{t(w.descriptionKey as never)}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="card p-5">
+        <h3 className="mb-2 text-sm font-semibold text-plum-600">{t('rfPrepareVisit')}</h3>
+        <p className="mb-3 text-xs text-plum-400">{t('rfPrintInstructions')}</p>
+        <button onClick={handlePrint} className="btn-secondary w-full">
+          <Printer size={16} />
+          {t('rfPrintSummary')}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function RedFlagCard({ flag, t }: { flag: RedFlag; t: (key: never) => string }) {
+  const isUrgent = flag.severity === 'urgent';
+  return (
+    <div className={`rounded-xl border p-4 ${isUrgent ? 'border-coral-200 bg-blush-100' : 'border-cream-200 bg-cream-50'}`}>
+      <div className="mb-2 flex items-center gap-2">
+        <span className={`text-xs font-semibold uppercase ${isUrgent ? 'text-coral-600' : 'text-plum-400'}`}>
+          {isUrgent ? t('rfSeverityUrgent' as never) : t('rfSeverityRoutine' as never)}
+        </span>
+        {isUrgent && <AlertTriangle size={14} className="text-coral-500" />}
+      </div>
+      <h4 className={`text-sm font-semibold ${isUrgent ? 'text-coral-700' : 'text-plum-600'}`}>
+        {t(flag.titleKey as never)}
+      </h4>
+      <p className="mt-1 text-sm text-plum-500">{t(flag.descriptionKey as never)}</p>
+      {flag.dates && flag.dates.length > 0 && (
+        <p className="mt-2 text-xs text-plum-400">
+          {t('rfDatesLabel' as never)}: {flag.dates.join(', ')}
+        </p>
+      )}
+      <p className={`mt-2 text-sm font-medium ${isUrgent ? 'text-coral-600' : 'text-plum-500'}`}>
+        {t(flag.actionKey as never)}
+      </p>
+      {flag.basedOnIncompleteInfo && (
+        <p className="mt-2 text-xs italic text-plum-400">{t('rfBasedOnIncompleteInfo' as never)}</p>
+      )}
     </div>
   );
 }
