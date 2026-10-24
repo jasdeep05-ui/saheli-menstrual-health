@@ -29,13 +29,7 @@ export interface ImportPreview {
   profile: boolean;
 }
 
-export interface ImportResult {
-  periods: PeriodEntry[];
-  symptoms: SymptomEntry[];
-  onboarding: OnboardingPrefs | null;
-  reminders: ReminderPrefs | null;
-  profile: UserProfile | null;
-}
+export type ImportResult = SaheliExport['data'];
 
 // ---------------------------------------------------------------------------
 // Export
