@@ -238,7 +238,7 @@ export function FloatingSaheli() {
                             <button key={id} onClick={() => { navigate(`/learn/${id}`); setOpen(false); }}
                               className="flex items-center gap-1 rounded-full bg-lavender-100 px-2.5 py-1 text-[10px] text-lavender-600 hover:bg-lavender-200 transition-colors">
                               <BookOpen size={10} />
-                              {article.title}
+                              {article.title.en}
                             </button>
                           );
                         })}

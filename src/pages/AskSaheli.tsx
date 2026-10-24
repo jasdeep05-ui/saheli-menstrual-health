@@ -149,7 +149,7 @@ export function AskSaheli() {
                       <button key={id} onClick={() => navigate(`/learn/${id}`)}
                         className="flex items-center gap-1 rounded-full bg-lavender-100 px-3 py-1 text-xs text-lavender-600 hover:bg-lavender-200 transition-colors">
                         <BookOpen size={12} />
-                        {article.title}
+                        {article.title.en}
                       </button>
                     );
                   })}

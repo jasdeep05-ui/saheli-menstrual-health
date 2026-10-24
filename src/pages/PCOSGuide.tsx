@@ -6,7 +6,7 @@ import {
   Baby, ShieldAlert, Sparkles, CalendarClock, ExternalLink, CheckCircle2,
   Circle, MessageCircle, Flower2, BookOpen, Lightbulb,
 } from 'lucide-react';
-import type { Lang } from '../lib/i18n';
+
 
 interface BilingualText { en: string; hi: string }
 

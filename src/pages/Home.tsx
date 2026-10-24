@@ -176,8 +176,8 @@ export function Home() {
           onClick={() => navigate(`/learn/${tip.id}`)}
           className="block w-full p-5 text-left transition-colors hover:bg-cream-50"
         >
-          <p className="font-medium text-plum-600">{tip.title}</p>
-          <p className="mt-1 text-sm text-plum-400 line-clamp-2">{tip.summary}</p>
+          <p className="font-medium text-plum-600">{tip.title[lang]}</p>
+          <p className="mt-1 text-sm text-plum-400 line-clamp-2">{tip.summary[lang]}</p>
           <span className="mt-2 text-xs text-coral-400">Read more →</span>
         </button>
       </div>

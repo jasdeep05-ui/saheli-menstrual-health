@@ -155,9 +155,12 @@ function retrieveArticles(query: string): LearnArticle[] {
   }
 
   const direct = articles.filter(a =>
-    a.title.toLowerCase().includes(q) ||
-    a.summary.toLowerCase().includes(q) ||
-    a.sections.some(s => s.heading.toLowerCase().includes(q) || s.body.toLowerCase().includes(q))
+    a.title.en.toLowerCase().includes(q) ||
+    a.summary.en.toLowerCase().includes(q) ||
+    a.sections.some(s => s.en.heading.toLowerCase().includes(q) || s.en.body.toLowerCase().includes(q)) ||
+    a.title.hi.includes(q) ||
+    a.summary.hi.includes(q) ||
+    a.sections.some(s => s.hi.heading.includes(q) || s.hi.body.includes(q))
   );
   direct.forEach(a => matchedIds.add(a.id));
 
@@ -270,11 +273,11 @@ function buildFallbackResponse(query: string): string {
   }
 
   const primary = matchedArticles[0];
-  let text = primary.summary + '\n\n';
+  let text = primary.summary.en + '\n\n';
 
   const firstSection = primary.sections[0];
   if (firstSection) {
-    text += firstSection.body;
+    text += firstSection.en.body;
   }
 
   if (matchedArticles.length > 1) {
@@ -412,7 +415,7 @@ export async function getSaheliResponse(
     let text = buildFallbackResponse(query);
 
     if (isDiagnosis) {
-      text = diagnosisGuardrail() + '\n\n' + (matchedArticles[0]?.summary || '');
+      text = diagnosisGuardrail() + '\n\n' + (matchedArticles[0]?.summary.en || '');
     } else if (isMedication) {
       text = medicationGuardrail();
     }
