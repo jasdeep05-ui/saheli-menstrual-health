@@ -13,7 +13,7 @@ const CATEGORY_LABELS: Record<string, string> = {
 };
 
 export function Learn() {
-  const { t } = useApp();
+  const { t, lang } = useApp();
   const navigate = useNavigate();
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState('all');
@@ -42,10 +42,12 @@ export function Learn() {
             <Flower2 size={28} className="text-coral-400" />
           </span>
           <div className="flex-1">
-            <p className="font-display text-base font-semibold text-plum-700">Understanding PCOS/PCOD</p>
-            <p className="text-sm font-medium text-coral-500">Knowledge Without Fear</p>
+            <p className="font-display text-base font-semibold text-plum-700">{lang === 'hi' ? 'PCOS/PCOD को समझना' : 'Understanding PCOS/PCOD'}</p>
+            <p className="text-sm font-medium text-coral-500">{lang === 'hi' ? 'बिना डर के ज्ञान' : 'Knowledge Without Fear'}</p>
             <p className="mt-1 text-xs leading-relaxed text-plum-500">
-              A comprehensive guide: hormones, symptoms, diagnosis, treatment, fertility, and emotional well-being.
+              {lang === 'hi'
+                ? 'एक व्यापक मार्गदर्शक: हार्मोन, लक्षण, निदान, उपचार, प्रजनन क्षमता, और भावनात्मक कल्याण।'
+                : 'A comprehensive guide: hormones, symptoms, diagnosis, treatment, fertility, and emotional well-being.'}
             </p>
           </div>
           <ChevronRight size={20} className="flex-shrink-0 text-plum-300" />
@@ -95,8 +97,8 @@ export function Learn() {
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="flex-1">
-                  <p className="font-medium text-plum-600">{article.title}</p>
-                  <p className="mt-1 text-sm text-plum-400 line-clamp-2">{article.summary}</p>
+                  <p className="font-medium text-plum-600">{article.title[lang]}</p>
+                  <p className="mt-1 text-sm text-plum-400 line-clamp-2">{article.summary[lang]}</p>
                   <div className="mt-2 flex items-center gap-2">
                     <span className="badge bg-lavender-100 text-lavender-600">{t(CATEGORY_LABELS[article.category] as TranslationKey)}</span>
                   </div>

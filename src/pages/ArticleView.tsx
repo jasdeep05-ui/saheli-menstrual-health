@@ -9,7 +9,7 @@ import { format, parseISO } from 'date-fns';
 export function ArticleView() {
   const { articleId } = useParams();
   const navigate = useNavigate();
-  const { t } = useApp();
+  const { t, lang } = useApp();
   const [showSimple, setShowSimple] = useState(false);
   const article = articleId ? getArticleById(articleId) : undefined;
 
@@ -30,8 +30,8 @@ export function ArticleView() {
 
       <div>
         <span className="badge bg-lavender-100 text-lavender-600 mb-2">{article.category}</span>
-        <h1 className="font-display text-2xl font-semibold text-plum-700">{article.title}</h1>
-        <p className="mt-2 text-sm text-plum-400">{article.summary}</p>
+        <h1 className="font-display text-2xl font-semibold text-plum-700">{article.title[lang]}</h1>
+        <p className="mt-2 text-sm text-plum-400">{article.summary[lang]}</p>
       </div>
 
       {/* Meta */}
@@ -57,9 +57,9 @@ export function ArticleView() {
         <div className="card animate-slide-up p-5">
           <div className="mb-2 flex items-center gap-2">
             <Lightbulb size={16} className="text-coral-400" />
-            <h2 className="text-sm font-semibold text-coral-500">Simple explanation</h2>
+            <h2 className="text-sm font-semibold text-coral-500">{lang === 'hi' ? 'सरल स्पष्टीकरण' : 'Simple explanation'}</h2>
           </div>
-          <p className="text-sm leading-relaxed text-plum-500">{article.simpleExplanation}</p>
+          <p className="text-sm leading-relaxed text-plum-500">{article.simpleExplanation[lang]}</p>
         </div>
       )}
 
@@ -67,8 +67,8 @@ export function ArticleView() {
       <div className="space-y-4">
         {article.sections.map((section, i) => (
           <div key={i} className="card p-5">
-            <h2 className="mb-2 font-display text-lg font-semibold text-plum-700">{section.heading}</h2>
-            <p className="text-sm leading-relaxed text-plum-500">{section.body}</p>
+            <h2 className="mb-2 font-display text-lg font-semibold text-plum-700">{section[lang].heading}</h2>
+            <p className="text-sm leading-relaxed text-plum-500">{section[lang].body}</p>
           </div>
         ))}
       </div>
@@ -84,8 +84,8 @@ export function ArticleView() {
               <BookOpen size={24} className="text-coral-400" />
             </span>
             <div className="flex-1">
-              <p className="font-display text-sm font-semibold text-plum-700">Understanding PCOS/PCOD — Knowledge Without Fear</p>
-              <p className="mt-0.5 text-xs text-plum-500">Explore the full guide: symptoms, diagnosis, treatment, fertility, and more.</p>
+              <p className="font-display text-sm font-semibold text-plum-700">{lang === 'hi' ? 'PCOS/PCOD को समझना — बिना डर के ज्ञान' : 'Understanding PCOS/PCOD — Knowledge Without Fear'}</p>
+              <p className="mt-0.5 text-xs text-plum-500">{lang === 'hi' ? 'पूरा मार्गदर्शक देखें: लक्षण, निदान, उपचार, प्रजनन क्षमता, और बहुत कुछ।' : 'Explore the full guide: symptoms, diagnosis, treatment, fertility, and more.'}</p>
             </div>
             <ChevronLeft size={18} className="rotate-180 flex-shrink-0 text-plum-300" />
           </button>
@@ -120,7 +120,7 @@ export function ArticleView() {
               return (
                 <button key={id} onClick={() => { navigate(`/learn/${id}`); setShowSimple(false); window.scrollTo(0, 0); }}
                   className="flex w-full items-center justify-between rounded-xl bg-cream-50 px-4 py-3 text-left transition-colors hover:bg-cream-100">
-                  <span className="text-sm font-medium text-plum-600">{related.title}</span>
+                  <span className="text-sm font-medium text-plum-600">{related.title[lang]}</span>
                   <ChevronLeft size={16} className="rotate-180 text-plum-300" />
                 </button>
               );
