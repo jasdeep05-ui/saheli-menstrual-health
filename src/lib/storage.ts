@@ -1,6 +1,7 @@
 // Local storage layer — privacy-first, all data stays on-device
 
 import type { PeriodEntry, SymptomEntry, OnboardingPrefs, ReminderPrefs, UserProfile } from '../types';
+import type { SaheliExport } from './data-transfer';
 
 const KEYS = {
   PERIODS: 'saheli_periods',
@@ -136,6 +137,26 @@ export function saveProfile(profile: UserProfile): void {
   write(KEYS.PROFILE, profile);
 }
 
+// Export all local data as a single object for backup/transfer
+export function exportAllData(): SaheliExport['data'] {
+  return {
+    periods: getPeriods(),
+    symptoms: getSymptoms(),
+    onboarding: getOnboarding(),
+    reminders: getReminders(),
+    profile: getProfile(),
+  };
+}
+
+// Import a complete data set, replacing all local storage
+export function importAllData(data: SaheliExport['data']): void {
+  savePeriods(data.periods);
+  saveSymptoms(data.symptoms);
+  saveOnboarding(data.onboarding);
+  saveReminders(data.reminders);
+  saveProfile(data.profile);
+}
+
 // Data clearing
 export function clearAllData(): void {
   localStorage.removeItem(KEYS.PERIODS);
@@ -147,6 +168,9 @@ export function clearOnboarding(): void {
   localStorage.removeItem(KEYS.ONBOARDING);
 }
 
+// Removes every Saheli-owned localStorage key: periods, symptoms,
+// profile, onboarding, and reminder settings. Does not touch
+// unrelated browser data or data sent to external services.
 export function clearEverything(): void {
   Object.values(KEYS).forEach(k => localStorage.removeItem(k));
 }

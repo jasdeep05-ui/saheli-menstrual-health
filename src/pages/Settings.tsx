@@ -1,20 +1,46 @@
-import { useState } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../lib/app-context';
 import * as storage from '../lib/storage';
-import { Globe, Shield, Bell, Info, Trash2, RotateCcw } from 'lucide-react';
+import {
+  exportToJsonString,
+  periodsToCsv,
+  symptomsToCsv,
+  downloadFile,
+  parseBackupFile,
+  buildImportPreview,
+  applyImport,
+  type ImportMode,
+  type ImportPreview,
+  type SaheliExport,
+} from '../lib/data-transfer';
+import { Globe, Shield, Bell, Info, Trash2, RotateCcw, Download, Upload, FileJson, FileText, CheckCircle2, AlertCircle } from 'lucide-react';
 import type { ReminderPrefs } from '../types';
 import type { Lang } from '../lib/i18n';
 
+type StatusKind = 'success' | 'error' | null;
+
 export function Settings() {
-  const { t, lang, setLang, reminders, setReminders, refreshPeriods, refreshSymptoms } = useApp();
+  const { t, lang, setLang, reminders, setReminders, refreshAll } = useApp();
   const navigate = useNavigate();
   const [showClearConfirm, setShowClearConfirm] = useState(false);
 
+  // export status
+  const [exportStatus, setExportStatus] = useState<StatusKind>(null);
+  const [exportMessage, setExportMessage] = useState('');
+
+  // import state
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [parsedBackup, setParsedBackup] = useState<SaheliExport | null>(null);
+  const [importError, setImportError] = useState('');
+  const [importPreview, setImportPreview] = useState<ImportPreview | null>(null);
+  const [importMode, setImportMode] = useState<ImportMode>('merge');
+  const [importStatus, setImportStatus] = useState<StatusKind>(null);
+  const [importStatusMsg, setImportStatusMsg] = useState('');
+
   const handleClearData = () => {
-    storage.clearAllData();
-    refreshPeriods();
-    refreshSymptoms();
+    storage.clearEverything();
+    refreshAll();
     setShowClearConfirm(false);
   };
 
@@ -27,6 +53,109 @@ export function Settings() {
 
   const updateReminder = (updates: Partial<ReminderPrefs>) => {
     setReminders({ ...reminders, ...updates });
+  };
+
+  // --- Export ---
+
+  const handleExportJson = useCallback(() => {
+    const data = storage.exportAllData();
+    const totalRecords = data.periods.length + data.symptoms.length;
+    if (totalRecords === 0 && !data.onboarding.completed) {
+      setExportStatus('error');
+      setExportMessage(t('settingsExportEmpty'));
+      return;
+    }
+    const json = exportToJsonString(data);
+    const ts = new Date().toISOString().slice(0, 10);
+    downloadFile(`saheli-backup-${ts}.json`, json, 'application/json');
+    setExportStatus('success');
+    setExportMessage(t('settingsExportSuccess'));
+  }, [t]);
+
+  const handleExportPeriodsCsv = useCallback(() => {
+    const periods = storage.getPeriods();
+    if (periods.length === 0) {
+      setExportStatus('error');
+      setExportMessage(t('settingsExportEmpty'));
+      return;
+    }
+    const csv = periodsToCsv(periods);
+    const ts = new Date().toISOString().slice(0, 10);
+    downloadFile(`saheli-periods-${ts}.csv`, csv, 'text/csv');
+    setExportStatus('success');
+    setExportMessage(t('settingsExportSuccess'));
+  }, [t]);
+
+  const handleExportSymptomsCsv = useCallback(() => {
+    const symptoms = storage.getSymptoms();
+    if (symptoms.length === 0) {
+      setExportStatus('error');
+      setExportMessage(t('settingsExportEmpty'));
+      return;
+    }
+    const csv = symptomsToCsv(symptoms);
+    const ts = new Date().toISOString().slice(0, 10);
+    downloadFile(`saheli-symptoms-${ts}.csv`, csv, 'text/csv');
+    setExportStatus('success');
+    setExportMessage(t('settingsExportSuccess'));
+  }, [t]);
+
+  // --- Import ---
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setImportStatus(null);
+    setImportStatusMsg('');
+    setImportError('');
+    setParsedBackup(null);
+    setImportPreview(null);
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const text = String(reader.result || '');
+      const result = parseBackupFile(text);
+      if (!result.ok || !result.export) {
+        setImportError(result.error || t('settingsImportInvalid'));
+        return;
+      }
+      const current = storage.exportAllData();
+      const preview = buildImportPreview(result.export, current);
+      setParsedBackup(result.export);
+      setImportPreview(preview);
+    };
+    reader.onerror = () => {
+      setImportError(t('settingsImportError'));
+    };
+    reader.readAsText(file);
+
+    // reset input so the same file can be selected again
+    e.target.value = '';
+  };
+
+  const handleImportConfirm = () => {
+    if (!parsedBackup) return;
+
+    try {
+      const current = storage.exportAllData();
+      const result = applyImport(parsedBackup, current, importMode);
+      storage.importAllData(result);
+      refreshAll();
+      setImportStatus('success');
+      setImportStatusMsg(t('settingsImportSuccess'));
+      setParsedBackup(null);
+      setImportPreview(null);
+    } catch {
+      setImportStatus('error');
+      setImportStatusMsg(t('settingsImportError'));
+    }
+  };
+
+  const handleImportCancel = () => {
+    setParsedBackup(null);
+    setImportPreview(null);
+    setImportError('');
   };
 
   return (
@@ -64,6 +193,112 @@ export function Settings() {
         <div className="mb-4 rounded-xl bg-cream-50 p-4">
           <p className="text-sm leading-relaxed text-plum-400">{t('settingsDataStored')}</p>
         </div>
+
+        {/* Export */}
+        <div className="mb-4 space-y-2">
+          <h3 className="text-sm font-semibold text-plum-600">{t('settingsExportData')}</h3>
+          <button onClick={handleExportJson} className="btn-secondary w-full">
+            <FileJson size={16} /> {t('settingsExportJson')}
+          </button>
+          <div className="flex gap-2">
+            <button onClick={handleExportPeriodsCsv} className="btn-secondary flex-1">
+              <FileText size={16} /> {t('settingsExportCsv')}
+            </button>
+            <button onClick={handleExportSymptomsCsv} className="btn-secondary flex-1">
+              <FileText size={16} /> {t('settingsExportSymptomsCsv')}
+            </button>
+          </div>
+          {exportStatus && (
+            <div className={`flex items-center gap-2 rounded-xl p-3 text-sm ${
+              exportStatus === 'success' ? 'bg-green-50 text-green-700' : 'bg-blush-100 text-coral-600'
+            }`}>
+              {exportStatus === 'success' ? <CheckCircle2 size={16} /> : <AlertCircle size={16} />}
+              {exportMessage}
+            </div>
+          )}
+        </div>
+
+        {/* Import */}
+        <div className="mb-4 space-y-2">
+          <h3 className="text-sm font-semibold text-plum-600">{t('settingsImportData')}</h3>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="application/json,.json"
+            onChange={handleFileSelect}
+            className="hidden"
+          />
+          <button onClick={() => fileInputRef.current?.click()} className="btn-secondary w-full">
+            <Upload size={16} /> {t('settingsImportSelect')}
+          </button>
+
+          {importError && (
+            <div className="flex items-center gap-2 rounded-xl bg-blush-100 p-3 text-sm text-coral-600">
+              <AlertCircle size={16} /> {importError}
+            </div>
+          )}
+
+          {importPreview && parsedBackup && (
+            <div className="rounded-xl border border-cream-200 bg-cream-50 p-4 space-y-3">
+              <h4 className="text-sm font-semibold text-plum-600">{t('settingsImportPreview')}</h4>
+              <div className="space-y-1 text-sm text-plum-500">
+                <div className="flex justify-between">
+                  <span>{t('settingsImportPeriods')}</span>
+                  <span>{importPreview.periods.total} ({importPreview.periods.added} {t('settingsImportAdded')}, {importPreview.periods.updated} {t('settingsImportUpdated')})</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>{t('settingsImportSymptoms')}</span>
+                  <span>{importPreview.symptoms.total} ({importPreview.symptoms.added} {t('settingsImportAdded')}, {importPreview.symptoms.updated} {t('settingsImportUpdated')})</span>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className={`flex items-start gap-2 rounded-xl border p-3 cursor-pointer transition-all ${
+                  importMode === 'merge' ? 'border-coral-300 bg-coral-50' : 'border-cream-200 bg-white'
+                }`}>
+                  <input type="radio" name="importMode" value="merge" checked={importMode === 'merge'}
+                    onChange={() => setImportMode('merge')} className="mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium text-plum-600">{t('settingsImportMerge')}</p>
+                    <p className="text-xs text-plum-400">{t('settingsImportMergeDesc')}</p>
+                  </div>
+                </label>
+                <label className={`flex items-start gap-2 rounded-xl border p-3 cursor-pointer transition-all ${
+                  importMode === 'replace' ? 'border-coral-300 bg-coral-50' : 'border-cream-200 bg-white'
+                }`}>
+                  <input type="radio" name="importMode" value="replace" checked={importMode === 'replace'}
+                    onChange={() => setImportMode('replace')} className="mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium text-plum-600">{t('settingsImportReplace')}</p>
+                    <p className="text-xs text-plum-400">{t('settingsImportReplaceDesc')}</p>
+                  </div>
+                </label>
+              </div>
+
+              {importMode === 'replace' && (
+                <p className="text-xs text-coral-600">{t('settingsImportReplaceWarn')}</p>
+              )}
+
+              <div className="flex gap-2">
+                <button onClick={handleImportCancel} className="btn-secondary flex-1">{t('commonCancel')}</button>
+                <button onClick={handleImportConfirm} className="btn-primary flex-1 bg-coral-500 hover:bg-coral-600">
+                  <Download size={16} /> {t('settingsImportConfirm')}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {importStatus && (
+            <div className={`flex items-center gap-2 rounded-xl p-3 text-sm ${
+              importStatus === 'success' ? 'bg-green-50 text-green-700' : 'bg-blush-100 text-coral-600'
+            }`}>
+              {importStatus === 'success' ? <CheckCircle2 size={16} /> : <AlertCircle size={16} />}
+              {importStatusMsg}
+            </div>
+          )}
+        </div>
+
+        {/* Delete */}
         {showClearConfirm ? (
           <div className="rounded-xl border border-coral-200 bg-blush-100 p-4">
             <p className="mb-3 text-sm text-coral-600">{t('settingsClearConfirm')}</p>

@@ -16,6 +16,7 @@ interface AppContextValue {
   refreshPeriods: () => void;
   symptoms: SymptomEntry[];
   refreshSymptoms: () => void;
+  refreshAll: () => void;
   isOnboarded: boolean;
 }
 
@@ -55,6 +56,15 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setSymptoms(storage.getSymptoms());
   }, []);
 
+  const refreshAll = useCallback(() => {
+    const onb = storage.getOnboarding();
+    setOnboardingState(onb);
+    setLangState(onb.language);
+    setRemindersState(storage.getReminders());
+    setPeriods(storage.getPeriods());
+    setSymptoms(storage.getSymptoms());
+  }, []);
+
   const t = useCallback((key: keyof typeof translations.en) => translate(lang, key), [lang]);
 
   return (
@@ -64,6 +74,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       reminders, setReminders,
       periods, refreshPeriods,
       symptoms, refreshSymptoms,
+      refreshAll,
       isOnboarded: onboarding.completed,
     }}>
       {children}
