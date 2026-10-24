@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useApp } from '../lib/app-context';
 import { GirlIllustration } from './GirlIllustration';
-import { getSaheliResponse, SUGGESTED_QUESTIONS, type SaheliResponse, type ConversationMessage } from '../lib/saheli-ai';
+import { getSaheliResponse, getSuggestedQuestions, type SaheliResponse, type ConversationMessage } from '../lib/saheli-ai';
 import { getArticleById } from '../lib/content';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { AlertTriangle, Send, ExternalLink, BookOpen, X, RotateCcw, Heart } from 'lucide-react';
@@ -17,7 +17,7 @@ interface ChatMessage {
 }
 
 export function FloatingSaheli() {
-  const { t } = useApp();
+  const { t, lang } = useApp();
   const navigate = useNavigate();
   const location = useLocation();
   const [open, setOpen] = useState(false);
@@ -30,8 +30,8 @@ export function FloatingSaheli() {
   const panelRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
 
-  const FLOATING_GREETING = 'Hi, lovely! 💗 What would you like to talk about?';
-  const FLOATING_SUGGESTIONS = SUGGESTED_QUESTIONS.slice(0, 4);
+  const FLOATING_GREETING = lang === 'hi' ? 'नमस्ते, लवली! 💗 आप क्या बात करना चाहेंगी?' : 'Hi, lovely! 💗 What would you like to talk about?';
+  const FLOATING_SUGGESTIONS = getSuggestedQuestions(lang).slice(0, 4);
 
   useEffect(() => {
     if (open && messages.length === 0) {
@@ -198,7 +198,7 @@ export function FloatingSaheli() {
                     {msg.isUrgent && (
                       <div className="mb-2 flex items-center gap-1.5 rounded-lg bg-blush-100 px-2.5 py-1">
                         <AlertTriangle size={14} className="text-coral-500" />
-                        <span className="text-[10px] font-semibold text-coral-600">Urgent care guidance</span>
+                        <span className="text-[10px] font-semibold text-coral-600">{t('askUrgentLabel')}</span>
                       </div>
                     )}
                     {msg.isUrgent && msg.urgentMessage && (
@@ -269,7 +269,7 @@ export function FloatingSaheli() {
             {/* Suggested questions */}
             {showSuggestions && !loading && (
               <div className="px-4 pb-2">
-                <p className="mb-1.5 text-[10px] font-medium text-plum-400">Start a conversation:</p>
+                <p className="mb-1.5 text-[10px] font-medium text-plum-400">{t('askStartConv')}</p>
                 <div className="flex flex-wrap gap-1.5">
                   {FLOATING_SUGGESTIONS.map((q, i) => (
                     <button key={i} onClick={() => handleSend(q)}

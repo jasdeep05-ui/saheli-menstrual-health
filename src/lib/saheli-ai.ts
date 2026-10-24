@@ -4,6 +4,7 @@
 // Falls back to curated content retrieval when the AI service is unavailable.
 
 import { articles, getArticleById, type LearnArticle } from './content';
+import type { Lang } from './i18n';
 
 export interface SaheliResponse {
   text: string;
@@ -430,14 +431,28 @@ export async function getSaheliResponse(
 }
 
 // Suggested conversation starters for the chat interface
-export const SUGGESTED_QUESTIONS = [
-  '💗 I need someone to listen',
-  '🌸 Help me understand my period',
-  '🫶 I\'m feeling overwhelmed',
-  '🩷 My period is late',
-  '✨ Help me feel better today',
-  '🌷 Tell me about menstrual hygiene',
-];
+export const SUGGESTED_QUESTIONS: Record<Lang, string[]> = {
+  en: [
+    '💗 I need someone to listen',
+    '🌸 Help me understand my period',
+    '🫶 I\'m feeling overwhelmed',
+    '🩷 My period is late',
+    '✨ Help me feel better today',
+    '🌷 Tell me about menstrual hygiene',
+  ],
+  hi: [
+    '💗 मुझे किसी से बात करनी है',
+    '🌸 मेरी अवधि को समझने में मदद करें',
+    '🫶 मैं अभिभूत महसूस कर रही हूं',
+    '🩷 मेरी अवधि देर से आई',
+    '✨ आज मुझे बेहतर महसूस कराएं',
+    '🌷 मासिक स्वच्छता के बारे में बताएं',
+  ],
+};
+
+export function getSuggestedQuestions(lang: Lang): string[] {
+  return SUGGESTED_QUESTIONS[lang] || SUGGESTED_QUESTIONS.en;
+}
 
 // Symptom guidance data for the "Should I be worried?" section
 export interface SymptomGuidance {
@@ -447,53 +462,155 @@ export interface SymptomGuidance {
   urgent: string[];
 }
 
-export const symptomGuidanceData: SymptomGuidance[] = [
+type BilingualGuidance = {
+  symptom: { en: string; hi: string };
+  generalInfo: { en: string; hi: string };
+  seeDoctor: { en: string; hi: string }[];
+  urgent: { en: string; hi: string }[];
+};
+
+const SYMPTOM_GUIDANCE_RAW: BilingualGuidance[] = [
   {
-    symptom: 'Cramps',
-    generalInfo: 'Mild to moderate cramps during your period are common. They are caused by the uterus contracting to shed its lining. A heating pad, gentle movement, and over-the-counter pain relief can help.',
-    seeDoctor: ['Pain that does not improve with over-the-counter medication', 'Pain that interferes with daily activities', 'Pain that worsens over several cycles'],
-    urgent: ['Sudden, severe pain that is different from your usual cramps', 'Pain with fever, vomiting, or fainting'],
+    symptom: { en: 'Cramps', hi: 'ऐंठन' },
+    generalInfo: {
+      en: 'Mild to moderate cramps during your period are common. They are caused by the uterus contracting to shed its lining. A heating pad, gentle movement, and over-the-counter pain relief can help.',
+      hi: 'अवधि के दौरान हल्की से मध्यम ऐंठन आम है। ये गर्भाशय के सिकुड़ने से होती हैं। हीटिंग पैड, हल्की गतिविधि, और ओटीसी दर्द निवारक मदद कर सकते हैं।',
+    },
+    seeDoctor: [
+      { en: 'Pain that does not improve with over-the-counter medication', hi: 'ओटीसी दवा से दर्द में सुधार न होना' },
+      { en: 'Pain that interferes with daily activities', hi: 'दर्द जो दैनिक गतिविधियों में बाधा डाले' },
+      { en: 'Pain that worsens over several cycles', hi: 'दर्द जो कई चक्रों में बढ़ता जाए' },
+    ],
+    urgent: [
+      { en: 'Sudden, severe pain that is different from your usual cramps', hi: 'अचानक, गंभीर दर्द जो आपकी सामान्य ऐंठन से अलग हो' },
+      { en: 'Pain with fever, vomiting, or fainting', hi: 'दर्द के साथ बुखार, उल्टी, या बेहोशी' },
+    ],
   },
   {
-    symptom: 'Heavy bleeding',
-    generalInfo: 'Some people naturally have heavier flows. However, very heavy bleeding can lead to anemia and may indicate an underlying condition.',
-    seeDoctor: ['Soaking through a pad or tampon every 2 hours', 'Periods lasting longer than 7 days', 'Passing large blood clots', 'Feeling tired, weak, or dizzy with periods'],
-    urgent: ['Soaking through a pad every hour for 2-3 hours', 'Bleeding with severe dizziness or fainting', 'Bleeding with chest pain or shortness of breath'],
+    symptom: { en: 'Heavy bleeding', hi: 'भारी रक्तस्राव' },
+    generalInfo: {
+      en: 'Some people naturally have heavier flows. However, very heavy bleeding can lead to anemia and may indicate an underlying condition.',
+      hi: 'कुछ लोगों को स्वाभाविक रूप से भारी फ्लो होता है। हालांकि, बहुत भारी रक्तस्राव से एनीमिया हो सकता है और यह किसी अंतर्निहित स्थिति का संकेत हो सकता है।',
+    },
+    seeDoctor: [
+      { en: 'Soaking through a pad or tampon every 2 hours', hi: 'हर 2 घंटे में पैड या टैम्पन भर जाना' },
+      { en: 'Periods lasting longer than 7 days', hi: 'अवधि 7 दिन से अधिक चलना' },
+      { en: 'Passing large blood clots', hi: 'बड़े रक्त के थक्के आना' },
+      { en: 'Feeling tired, weak, or dizzy with periods', hi: 'अवधि के साथ थकान, कमजोरी, या चक्कर आना' },
+    ],
+    urgent: [
+      { en: 'Soaking through a pad every hour for 2-3 hours', hi: 'हर घंटे पैड भर जाना 2-3 घंटे तक' },
+      { en: 'Bleeding with severe dizziness or fainting', hi: 'रक्तस्राव के साथ गंभीर चक्कर या बेहोशी' },
+      { en: 'Bleeding with chest pain or shortness of breath', hi: 'रक्तस्राव के साथ छाती में दर्द या सांस फूलना' },
+    ],
   },
   {
-    symptom: 'Irregular cycles',
-    generalInfo: 'Cycle length can vary, especially in the first few years after your period begins, during stress, or during perimenopause. Some variation is normal.',
-    seeDoctor: ['Cycles consistently shorter than 21 days or longer than 35 days', 'Missing 3 or more periods in a row', 'Sudden change in your established cycle pattern'],
-    urgent: ['Sudden severe bleeding after a missed period', 'Severe pain with an irregular cycle'],
+    symptom: { en: 'Irregular cycles', hi: 'अनियमित चक्र' },
+    generalInfo: {
+      en: 'Cycle length can vary, especially in the first few years after your period begins, during stress, or during perimenopause. Some variation is normal.',
+      hi: 'चक्र की लंबाई भिन्न हो सकती है, खासकर पहले कुछ वर्षों में, तनाव के दौरान, या पेरिमेनोपॉज में। कुछ विविधता सामान्य है।',
+    },
+    seeDoctor: [
+      { en: 'Cycles consistently shorter than 21 days or longer than 35 days', hi: 'चक्र लगातार 21 दिन से छोटे या 35 दिन से लंबे' },
+      { en: 'Missing 3 or more periods in a row', hi: 'लगातार 3 या अधिक अवधि छूटना' },
+      { en: 'Sudden change in your established cycle pattern', hi: 'आपके स्थापित चक्र पैटर्न में अचानक बदलाव' },
+    ],
+    urgent: [
+      { en: 'Sudden severe bleeding after a missed period', hi: 'छूटी अवधि के बाद अचानक गंभीर रक्तस्राव' },
+      { en: 'Severe pain with an irregular cycle', hi: 'अनियमित चक्र के साथ गंभीर दर्द' },
+    ],
   },
   {
-    symptom: 'Severe pain',
-    generalInfo: 'Period pain that is severe enough to interfere with daily life is not something to simply endure. It may be a sign of an underlying condition like endometriosis.',
-    seeDoctor: ['Pain that makes you miss school or work', 'Pain that does not respond to medication', 'Pain that has gotten worse over time', 'Pain during sex or between periods'],
-    urgent: ['Sudden, unbearable abdominal pain', 'Pain with fever, vomiting, or fainting', 'Pain after surgery or pregnancy'],
+    symptom: { en: 'Severe pain', hi: 'गंभीर दर्द' },
+    generalInfo: {
+      en: 'Period pain that is severe enough to interfere with daily life is not something to simply endure. It may be a sign of an underlying condition like endometriosis.',
+      hi: 'अवधि का दर्द जो दैनिक जीवन में बाधा डाले, उसे बस सहना नहीं चाहिए। यह एंडोमेट्रियोसिस जैसी स्थिति का संकेत हो सकता है।',
+    },
+    seeDoctor: [
+      { en: 'Pain that makes you miss school or work', hi: 'दर्द जिससे आपको स्कूल या काम से दूर रहना पड़े' },
+      { en: 'Pain that does not respond to medication', hi: 'दर्द जो दवा से न ठीक हो' },
+      { en: 'Pain that has gotten worse over time', hi: 'दर्द जो समय के साथ बढ़ा हो' },
+      { en: 'Pain during sex or between periods', hi: 'संभोग के दौरान या अवधि के बीच दर्द' },
+    ],
+    urgent: [
+      { en: 'Sudden, unbearable abdominal pain', hi: 'अचानक, असहनीय पेट दर्द' },
+      { en: 'Pain with fever, vomiting, or fainting', hi: 'दर्द के साथ बुखार, उल्टी, या बेहोशी' },
+      { en: 'Pain after surgery or pregnancy', hi: 'सर्जरी या गर्भावस्था के बाद दर्द' },
+    ],
   },
   {
-    symptom: 'Mood changes',
-    generalInfo: 'Hormonal changes can affect mood. Some emotional shifts before your period are common. Significant mood changes that disrupt your life may need attention.',
-    seeDoctor: ['Mood changes that significantly affect relationships or work', 'Feeling hopeless or unable to cope', 'Mood changes that occur only before your period and are severe'],
-    urgent: ['Thoughts of self-harm', 'Feeling completely unable to function', 'Severe anxiety or panic attacks'],
+    symptom: { en: 'Mood changes', hi: 'मूड में बदलाव' },
+    generalInfo: {
+      en: 'Hormonal changes can affect mood. Some emotional shifts before your period are common. Significant mood changes that disrupt your life may need attention.',
+      hi: 'हार्मोनल बदलाव मूड को प्रभावित कर सकते हैं। अवधि से पहले कुछ भावनात्मक बदलाव आम हैं। महत्वपूर्ण मूड बदलाव जो जीवन को बाधित करें, ध्यान की मांग कर सकते हैं।',
+    },
+    seeDoctor: [
+      { en: 'Mood changes that significantly affect relationships or work', hi: 'मूड बदलाव जो रिश्तों या काम पर गंभीर असर डालें' },
+      { en: 'Feeling hopeless or unable to cope', hi: 'निराश या सामना करने में असमर्थ महसूस करना' },
+      { en: 'Mood changes that occur only before your period and are severe', hi: 'मूड बदलाव जो केवल अवधि से पहले हों और गंभीर हों' },
+    ],
+    urgent: [
+      { en: 'Thoughts of self-harm', hi: 'आत्घात के विचार' },
+      { en: 'Feeling completely unable to function', hi: 'पूरी तरह कार्य करने में असमर्थ महसूस करना' },
+      { en: 'Severe anxiety or panic attacks', hi: 'गंभीर चिंता या पैनिक अटैक' },
+    ],
   },
   {
-    symptom: 'Fatigue',
-    generalInfo: 'Feeling tired during your period can be normal, especially with heavy flow. Persistent fatigue could be a sign of iron deficiency.',
-    seeDoctor: ['Persistent tiredness that does not improve with rest', 'Fatigue with heavy periods', 'Pale skin, dizziness, or shortness of breath'],
-    urgent: ['Severe weakness with heavy bleeding', 'Fainting or near-fainting', 'Chest pain or rapid heartbeat'],
+    symptom: { en: 'Fatigue', hi: 'थकान' },
+    generalInfo: {
+      en: 'Feeling tired during your period can be normal, especially with heavy flow. Persistent fatigue could be a sign of iron deficiency.',
+      hi: 'अवधि के दौरान थकान सामान्य हो सकती है, खासकर भारी फ्लो के साथ। लगातार थकान आयरन की कमी का संकेत हो सकती है।',
+    },
+    seeDoctor: [
+      { en: 'Persistent tiredness that does not improve with rest', hi: 'लगातार थकान जो आराम से ठीक न हो' },
+      { en: 'Fatigue with heavy periods', hi: 'भारी अवधि के साथ थकान' },
+      { en: 'Pale skin, dizziness, or shortness of breath', hi: 'पीली त्वचा, चक्कर, या सांस फूलना' },
+    ],
+    urgent: [
+      { en: 'Severe weakness with heavy bleeding', hi: 'भारी रक्तस्राव के साथ गंभीर कमजोरी' },
+      { en: 'Fainting or near-fainting', hi: 'बेहोशी या लगभग बेहोशी' },
+      { en: 'Chest pain or rapid heartbeat', hi: 'छाती दर्द या तेज दिल की धड़कन' },
+    ],
   },
   {
-    symptom: 'Bleeding between periods',
-    generalInfo: 'Spotting between periods can happen occasionally and may be harmless. However, persistent or unexplained bleeding between periods should be evaluated.',
-    seeDoctor: ['Bleeding between periods that happens more than once', 'Bleeding after sex', 'Any unusual bleeding pattern that is new for you'],
-    urgent: ['Heavy bleeding between periods', 'Bleeding with severe pain or fever'],
+    symptom: { en: 'Bleeding between periods', hi: 'अवधि के बीच रक्तस्राव' },
+    generalInfo: {
+      en: 'Spotting between periods can happen occasionally and may be harmless. However, persistent or unexplained bleeding between periods should be evaluated.',
+      hi: 'अवधि के बीच स्पॉटिंग कभी-कभी हो सकती है और हानिरहित हो सकती है। हालांकि, लगातार या असमझे रक्तस्राव का मूल्यांकन किया जाना चाहिए।',
+    },
+    seeDoctor: [
+      { en: 'Bleeding between periods that happens more than once', hi: 'अवधि के बीच रक्तस्राव जो एक से अधिक बार हो' },
+      { en: 'Bleeding after sex', hi: 'संभोग के बाद रक्तस्राव' },
+      { en: 'Any unusual bleeding pattern that is new for you', hi: 'कोई भी असामान्य रक्तस्राव पैटर्न जो आपके लिए नया हो' },
+    ],
+    urgent: [
+      { en: 'Heavy bleeding between periods', hi: 'अवधि के बीच भारी रक्तस्राव' },
+      { en: 'Bleeding with severe pain or fever', hi: 'रक्तस्राव के साथ गंभीर दर्द या बुखार' },
+    ],
   },
   {
-    symptom: 'Nausea or vomiting',
-    generalInfo: 'Some people experience mild nausea with period pain. More severe nausea may need evaluation.',
-    seeDoctor: ['Nausea that prevents eating or drinking for more than a day', 'Vomiting with period pain that is new for you'],
-    urgent: ['Inability to keep any fluids down', 'Vomiting with severe pain and fever', 'Signs of dehydration'],
+    symptom: { en: 'Nausea or vomiting', hi: 'जी मिचलाना या उल्टी' },
+    generalInfo: {
+      en: 'Some people experience mild nausea with period pain. More severe nausea may need evaluation.',
+      hi: 'कुछ लोगों को अवधि दर्द के साथ हल्की जी मिचलाहट होती है। अधिक गंभीर जी मिचलाहट का मूल्यांकन आवश्यक हो सकता है।',
+    },
+    seeDoctor: [
+      { en: 'Nausea that prevents eating or drinking for more than a day', hi: 'जी मिचलाहट जो एक दिन से अधिक खाने-पीने में बाधा डाले' },
+      { en: 'Vomiting with period pain that is new for you', hi: 'अवधि दर्द के साथ उल्टी जो आपके लिए नई हो' },
+    ],
+    urgent: [
+      { en: 'Inability to keep any fluids down', hi: 'कोई भी तरल पीने में असमर्थता' },
+      { en: 'Vomiting with severe pain and fever', hi: 'गंभीर दर्द और बुखार के साथ उल्टी' },
+      { en: 'Signs of dehydration', hi: 'निर्जलीकरण के लक्षण' },
+    ],
   },
 ];
+
+export function getSymptomGuidance(lang: Lang): SymptomGuidance[] {
+  return SYMPTOM_GUIDANCE_RAW.map(g => ({
+    symptom: g.symptom[lang],
+    generalInfo: g.generalInfo[lang],
+    seeDoctor: g.seeDoctor.map(item => item[lang]),
+    urgent: g.urgent.map(item => item[lang]),
+  }));
+}

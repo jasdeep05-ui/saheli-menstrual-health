@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useApp } from '../lib/app-context';
-import { getSaheliResponse, SUGGESTED_QUESTIONS, type SaheliResponse, type ConversationMessage } from '../lib/saheli-ai';
+import { getSaheliResponse, getSuggestedQuestions, type SaheliResponse, type ConversationMessage } from '../lib/saheli-ai';
 import { getArticleById } from '../lib/content';
 import { AlertTriangle, Send, ExternalLink, BookOpen, Shield, RotateCcw, Heart } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -16,7 +16,7 @@ interface ChatMessage {
 }
 
 export function AskSaheli() {
-  const { t } = useApp();
+  const { t, lang } = useApp();
   const navigate = useNavigate();
   const [messages, setMessages] = useState<ChatMessage[]>([
     { role: 'saheli', text: t('askIntro') },
@@ -109,7 +109,7 @@ export function AskSaheli() {
               {msg.isUrgent && (
                 <div className="mb-2 flex items-center gap-1.5 rounded-lg bg-blush-100 px-3 py-1.5">
                   <AlertTriangle size={16} className="text-coral-500" />
-                  <span className="text-xs font-semibold text-coral-600">Urgent care guidance</span>
+                  <span className="text-xs font-semibold text-coral-600">{t('askUrgentLabel')}</span>
                 </div>
               )}
               {msg.isUrgent && msg.urgentMessage && (
@@ -180,9 +180,9 @@ export function AskSaheli() {
       {/* Suggested conversation starters */}
       {showSuggestions && !loading && (
         <div className="mb-3">
-          <p className="mb-2 text-xs font-medium text-plum-400">Start a conversation:</p>
+          <p className="mb-2 text-xs font-medium text-plum-400">{t('askStartConv')}</p>
           <div className="flex flex-wrap gap-2">
-            {SUGGESTED_QUESTIONS.map((q, i) => (
+            {getSuggestedQuestions(lang).map((q, i) => (
               <button key={i} onClick={() => handleSend(q)}
                 className="rounded-full border border-cream-300 bg-white px-3 py-1.5 text-xs text-plum-500 transition-all hover:border-coral-300 hover:bg-coral-50">
                 {q}

@@ -188,6 +188,79 @@ export const translations = {
     helpTalkAbout: 'Help me talk about it',
     helpSymptomGuidance: 'Should I be worried?',
 
+    // Help — Unexpected period
+    helpUnexpectedTitle: 'Managing an unexpected period',
+    helpUnexpectedStep1: 'Stay calm — it is completely normal for periods to start unexpectedly.',
+    helpUnexpectedStep2: 'Check if a friend, colleague, or school nurse has a spare pad or tampon.',
+    helpUnexpectedStep3: 'If no product is available, fold toilet paper or tissue into a thick pad as a temporary solution.',
+    helpUnexpectedStep4: 'If you stained your clothes, tie a jacket or sweater around your waist to cover it.',
+    helpUnexpectedStep5: 'Wash any stained clothing with cold water as soon as possible — warm water sets stains.',
+    helpUnexpectedStep6: 'Change your temporary pad every 2-3 hours until you can get a proper product.',
+    helpUnexpectedStep7: 'If you are at school, ask to visit the school nurse or counselor — they often have supplies.',
+    helpUnexpectedStep8: 'If you are at work, check if your workplace has a first-aid room or supplies.',
+
+    // Help — Emergency kit
+    helpKitTitle: 'Emergency kit checklist',
+    helpKitDesc: 'Build a small kit to keep in your bag. Tap items to check them off.',
+    helpKitItem1: '2-3 sanitary pads (regular and heavy flow)',
+    helpKitItem2: '1-2 tampons (if you use them)',
+    helpKitItem3: 'Spare underwear',
+    helpKitItem4: 'Small pack of tissues',
+    helpKitItem5: 'Wet wipes (unscented, biodegradable)',
+    helpKitItem6: 'Small plastic bag for disposing used products',
+    helpKitItem7: 'Pain relief medication (in its original packaging)',
+    helpKitItem8: 'Hand sanitizer',
+    helpKitItemsChecked: 'items checked',
+
+    // Help — Hygiene
+    helpHygWashHandsT: 'Wash your hands',
+    helpHygWashHandsD: 'Always wash hands before and after changing any menstrual product.',
+    helpHygChangeT: 'Change regularly',
+    helpHygChangeD: 'Pads every 3-4 hours, tampons every 4-6 hours, cups up to 12 hours.',
+    helpHygWashT: 'External washing',
+    helpHygWashD: 'Wash the external genital area with warm water and mild unscented soap. The vagina is self-cleaning — avoid douching.',
+    helpHygDisposalT: 'Safe disposal',
+    helpHygDisposalD: 'Wrap used products in tissue or their wrapper before disposing in a bin. Never flush pads or tampons.',
+    helpHygUnderwearT: 'Comfortable underwear',
+    helpHygUnderwearD: 'Cotton underwear is breathable and helps prevent irritation during your period.',
+    helpHygHydrateT: 'Stay hydrated',
+    helpHygHydrateD: 'Drinking water can help reduce bloating and keep you feeling better during your period.',
+
+    // Help — Symptom guidance
+    helpSgIntro: 'Select a symptom to see general guidance, signs that warrant medical attention, and warning signs that may need urgent care.',
+    helpSgDisclaimer: 'This is educational guidance, not a diagnosis. It cannot tell you whether you do or do not have a condition.',
+    helpSgSeeDoctor: 'Consider seeing a doctor if:',
+    helpSgUrgentCare: 'Seek urgent care if:',
+    helpSgDownload: 'Create summary for a healthcare appointment',
+
+    // Help — Find support
+    helpFsEssentialsT: 'Find Nearby Period Essentials',
+    helpFsEssentialsD: 'Locate pharmacies and medical stores near you that may stock pads, tampons, and menstrual cups.',
+    helpFsIntro: 'These are general health resources from recognized organizations. For local healthcare facilities, search for clinics or hospitals in your area, or contact your local health department.',
+    helpFsNote: 'Saheli does not verify specific local clinics or services. Always check current availability and eligibility directly with the provider.',
+    helpFsResource1: 'Public health resource',
+    helpFsResource2: 'Support organization',
+    helpFsResource3: 'Healthcare information',
+
+    // Help — Talk about
+    helpTaIntro: 'Starting a conversation about periods can feel hard, but it gets easier. Here are some opening lines to help.',
+    helpTaWho1: 'A trusted adult or parent',
+    helpTaOpen1: '"I wanted to talk to you about something. I got my period / I have a question about periods..."',
+    helpTaTip1: 'Choose a quiet, private moment. You can write it down if speaking feels hard.',
+    helpTaWho2: 'A teacher or school counselor',
+    helpTaOpen2: '"I need some help. Do you have any menstrual products? / Can I talk to you about a health question?"',
+    helpTaTip2: 'School staff are there to help. You have the right to ask for support.',
+    helpTaWho3: 'A partner',
+    helpTaOpen3: '"I want to share something about my health with you. I am on my period / I have been experiencing..."',
+    helpTaTip3: 'Sharing helps them understand and support you better.',
+    helpTaWho4: 'A healthcare professional',
+    helpTaOpen4: '"I have been experiencing [symptoms] and wanted to get it checked. Here is a summary of what I have been tracking."',
+    helpTaTip4: 'You can use the symptom summary from the Insights page. You deserve to be heard.',
+
+    // Ask Saheli — UI
+    askStartConv: 'Start a conversation:',
+    askUrgentLabel: 'Urgent care guidance',
+
     // Settings
     settingsTitle: 'Settings',
     settingsLanguage: 'Language',
@@ -402,6 +475,79 @@ export const translations = {
     helpFindSupport: 'समर्थन खोजें',
     helpTalkAbout: 'बात करने में मदद करें',
     helpSymptomGuidance: 'क्या मुझे चिंता होनी चाहिए?',
+
+    // Help — Unexpected period
+    helpUnexpectedTitle: 'अप्रत्याशित अवधि का प्रबंधन',
+    helpUnexpectedStep1: 'शांत रहें — अवधि अचानक शुरू होना बिल्कुल सामान्य है।',
+    helpUnexpectedStep2: 'देखें कि किसी दोस्त, सहकर्मी, या स्कूल नर्स के पास अतिरिक्त पैड या टैम्पन है।',
+    helpUnexpectedStep3: 'यदि कोई उत्पाद उपलब्ध नहीं है, तो टॉयलेट पेपर या टिश्यू को मोड़कर एक मोटा पैड बनाएं।',
+    helpUnexpectedStep4: 'यदि कपड़ों पर दाग लग गया है, तो छुपाने के लिए जैकेट या स्वेटर कमर पर बांधें।',
+    helpUnexpectedStep5: 'दाग लगे कपड़े जितनी जल्दी हो सके ठंडे पानी से धोएं — गर्म पानी दाग को और गहरा कर देता है।',
+    helpUnexpectedStep6: 'उचित उत्पाद मिलने तक अस्थायी पैड हर 2-3 घंटे में बदलें।',
+    helpUnexpectedStep7: 'यदि आप स्कूल में हैं, तो स्कूल नर्स या काउंसलर से मिलें — उनके पास अक्सर सामान होता है।',
+    helpUnexpectedStep8: 'यदि आप काम पर हैं, तो देखें कि आपके कार्यस्थल पर फर्स्ट-एड कक्ष या सामान है।',
+
+    // Help — Emergency kit
+    helpKitTitle: 'आपातकालीन किट चेकलिस्ट',
+    helpKitDesc: 'अपने बैग में रखने के लिए एक छोटा किट बनाएं। आइटम चेक करने के लिए टैप करें।',
+    helpKitItem1: '2-3 सैनिटरी पैड (नियमित और भारी फ्लो)',
+    helpKitItem2: '1-2 टैम्पन (यदि आप उपयोग करती हैं)',
+    helpKitItem3: 'अतिरिक्त अंडरवियर',
+    helpKitItem4: 'टिश्यू का छोटा पैकेट',
+    helpKitItem5: 'वेट वाइप्स (बिना सुगंध, बायोडिग्रेडेबल)',
+    helpKitItem6: 'उपयोग किए गए उत्पाद निपटाने के लिए छोटा प्लास्टिक बैग',
+    helpKitItem7: 'दर्द निवारक दवा (मूल पैकेजिंग में)',
+    helpKitItem8: 'हैंड सैनिटाइज़र',
+    helpKitItemsChecked: 'आइटम चेक हो गए',
+
+    // Help — Hygiene
+    helpHygWashHandsT: 'हाथ धोएं',
+    helpHygWashHandsD: 'कोई भी मासिक उत्पाद बदलने से पहले और बाद में हाथ जरूर धोएं।',
+    helpHygChangeT: 'नियमित बदलें',
+    helpHygChangeD: 'पैड हर 3-4 घंटे, टैम्पन हर 4-6 घंटे, कप 12 घंटे तक।',
+    helpHygWashT: 'बाहरी सफाई',
+    helpHygWashD: 'बाहरी जननांग क्षेत्र को गुनगुने पानी और हल्के बिना सुगंध साबुन से धोएं। योनी स्वयं-सफाई करती है — डूचिंग से बचें।',
+    helpHygDisposalT: 'सुरक्षित निपटान',
+    helpHygDisposalD: 'उपयोग किए गए उत्पादों को टिश्यू या उनकी रैपर में लपेटकर बिन में डालें। पैड या टैम्पन कभी फ्लश न करें।',
+    helpHygUnderwearT: 'आरामदायक अंडरवियर',
+    helpHygUnderwearD: 'सूती अंडरवियर सांस लेने योग्य होता है और अवधि के दौरान जलन से बचाता है।',
+    helpHygHydrateT: 'हाइड्रेटेड रहें',
+    helpHygHydrateD: 'पानी पीने से सूजन कम हो सकती है और अवधि के दौरान बेहतर महसूस होता है।',
+
+    // Help — Symptom guidance
+    helpSgIntro: 'सामान्य मार्गदर्शन, चिकित्सकीय ध्यान के संकेत, और आपातकालीन देखभाल के चेतावनी संकेत देखने के लिए एक लक्षण चुनें।',
+    helpSgDisclaimer: 'यह शैक्षिक मार्गदर्शन है, निदान नहीं। यह आपको नहीं बता सकता कि आपको कोई स्थिति है या नहीं।',
+    helpSgSeeDoctor: 'चिकित्सक से मिलने पर विचार करें यदि:',
+    helpSgUrgentCare: 'आपातकालीन देखभाल के लिए जाएं यदि:',
+    helpSgDownload: 'चिकित्सक अपॉइंटमेंट के लिए सारांश बनाएं',
+
+    // Help — Find support
+    helpFsEssentialsT: 'पास में मासिक उत्पाद खोजें',
+    helpFsEssentialsD: 'अपने पास ऐसी फार्मेसी और मेडिकल स्टोर खोजें जिन पर पैड, टैम्पन, और मासिक कप हो सकते हैं।',
+    helpFsIntro: 'ये मान्यताप्राप्त संगठनों के सामान्य स्वास्थ्य संसाधन हैं। स्थानीय स्वास्थ्य सुविधाओं के लिए अपने क्षेत्र में क्लिनिक या अस्पताल खोजें, या अपने स्थानीय स्वास्थ्य विभाग से संपर्क करें।',
+    helpFsNote: 'Saheli विशिष्ट स्थानीय क्लिनिक या सेवाओं को सत्यापित नहीं करता। हमेशा प्रदाता से सीधे वर्तमान उपलब्धता और पात्रता जांचें।',
+    helpFsResource1: 'सार्वजनिक स्वास्थ्य संसाधन',
+    helpFsResource2: 'समर्थन संगठन',
+    helpFsResource3: 'स्वास्थ्य सेवा जानकारी',
+
+    // Help — Talk about
+    helpTaIntro: 'अवधि के बारे में बात शुरू करना मुश्किल लग सकता है, लेकिन यह आसान होता जाता है। यहां कुछ शुरुआती लाइनें हैं जो मदद कर सकती हैं।',
+    helpTaWho1: 'एक भरोसेमंद वयस्क या माता-पिता',
+    helpTaOpen1: '"मैं आपसे कुछ बात करना चाहती थी। मुझे मेरी अवधि आई / मेरे पास अवधि के बारे में एक सवाल है..."',
+    helpTaTip1: 'एक शांत, निजी पल चुनें। यदि बोलना मुश्किल लगे तो लिख सकती हैं।',
+    helpTaWho2: 'एक शिक्षक या स्कूल काउंसलर',
+    helpTaOpen2: '"मुझे कुछ मदद चाहिए। क्या आपके पास कोई मासिक उत्पाद है? / क्या मैं एक स्वास्थ्य सवाल पर बात कर सकती हूं?"',
+    helpTaTip2: 'स्कूल स्टाफ मदद के लिए हैं। आपको समर्थन मांगने का अधिकार है।',
+    helpTaWho3: 'एक साथी',
+    helpTaOpen3: '"मैं अपने स्वास्थ्य के बारे में आपसे कुछ साझा करना चाहती हूं। मैं अपनी अवधि पर हूं / मुझे कुछ हो रहा है..."',
+    helpTaTip3: 'साझा करने से उन्हें आपको बेहतर समझने और समर्थन करने में मदद मिलती है।',
+    helpTaWho4: 'एक चिकित्सक',
+    helpTaOpen4: '"मुझे [लक्षण] हो रहे हैं और मैं इसे जांचवाना चाहती थी। यहां मेरे ट्रैकिंग का सारांश है।"',
+    helpTaTip4: 'आप अंतर्दृष्टि पेज से लक्षण सारांश का उपयोग कर सकती हैं। आपकी बात सुनी जाने की हकदार हैं।',
+
+    // Ask Saheli — UI
+    askStartConv: 'बातचीत शुरू करें:',
+    askUrgentLabel: 'आपातकालीन देखभाल मार्गदर्शन',
 
     settingsTitle: 'सेटिंग्स',
     settingsLanguage: 'भाषा',
