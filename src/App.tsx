@@ -11,6 +11,7 @@ import { Insights } from './pages/Insights';
 import { AskSaheli } from './pages/AskSaheli';
 import { Learn } from './pages/Learn';
 import { ArticleView } from './pages/ArticleView';
+import { PCOSGuide } from './pages/PCOSGuide';
 import { Help } from './pages/Help';
 import { FindEssentials } from './pages/FindEssentials';
 import { Settings } from './pages/Settings';
@@ -33,6 +34,7 @@ function AppRoutes() {
               <Route path="/ask" element={<AskSaheli />} />
               <Route path="/learn" element={<Learn />} />
               <Route path="/learn/:articleId" element={<ArticleView />} />
+              <Route path="/learn/pcos-guide" element={<PCOSGuide />} />
               <Route path="/help" element={<Help />} />
               <Route path="/find-essentials" element={<FindEssentials />} />
               <Route path="/settings" element={<Settings />} />

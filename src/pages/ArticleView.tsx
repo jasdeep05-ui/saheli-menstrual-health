@@ -73,6 +73,25 @@ export function ArticleView() {
         ))}
       </div>
 
+      {/* Comprehensive PCOS guide link for pcos-basics */}
+      {article.id === 'pcos-basics' && (
+        <div className="card overflow-hidden">
+          <button
+            onClick={() => navigate('/learn/pcos-guide')}
+            className="flex w-full items-center gap-4 bg-gradient-to-br from-blush-100 via-lavender-100 to-mint-100 p-4 text-left transition-all hover:shadow-card"
+          >
+            <span className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-white/60">
+              <BookOpen size={24} className="text-coral-400" />
+            </span>
+            <div className="flex-1">
+              <p className="font-display text-sm font-semibold text-plum-700">Understanding PCOS/PCOD — Knowledge Without Fear</p>
+              <p className="mt-0.5 text-xs text-plum-500">Explore the full guide: symptoms, diagnosis, treatment, fertility, and more.</p>
+            </div>
+            <ChevronLeft size={18} className="rotate-180 flex-shrink-0 text-plum-300" />
+          </button>
+        </div>
+      )}
+
       {/* Sources */}
       <div className="card p-5">
         <h2 className="mb-3 flex items-center gap-2 text-sm font-semibold text-plum-500">

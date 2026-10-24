@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useApp } from '../lib/app-context';
 import { articles, CATEGORIES, searchArticles } from '../lib/content';
 import { EmptyState } from '../components/States';
-import { Search, BookOpen, ChevronRight } from 'lucide-react';
+import { Search, BookOpen, ChevronRight, Flower2 } from 'lucide-react';
 import type { TranslationKey } from '../lib/i18n';
 
 const CATEGORY_LABELS: Record<string, string> = {
@@ -31,6 +31,26 @@ export function Learn() {
       <div>
         <h1 className="font-display text-2xl font-semibold text-plum-700">{t('learnTitle')}</h1>
       </div>
+
+      {/* Featured: PCOS Guide */}
+      <button
+        onClick={() => navigate('/learn/pcos-guide')}
+        className="card block w-full overflow-hidden text-left transition-all hover:shadow-card"
+      >
+        <div className="flex items-center gap-4 bg-gradient-to-br from-blush-100 via-lavender-100 to-mint-100 p-5">
+          <span className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-2xl bg-white/60">
+            <Flower2 size={28} className="text-coral-400" />
+          </span>
+          <div className="flex-1">
+            <p className="font-display text-base font-semibold text-plum-700">Understanding PCOS/PCOD</p>
+            <p className="text-sm font-medium text-coral-500">Knowledge Without Fear</p>
+            <p className="mt-1 text-xs leading-relaxed text-plum-500">
+              A comprehensive guide: hormones, symptoms, diagnosis, treatment, fertility, and emotional well-being.
+            </p>
+          </div>
+          <ChevronRight size={20} className="flex-shrink-0 text-plum-300" />
+        </div>
+      </button>
 
       {/* Search */}
       <div className="relative">
