@@ -118,16 +118,32 @@ function SymptomForm({ open, onClose, onSave, editingEntry }: {
   const [energy, setEnergy] = useState<EnergyLevel>(editingEntry?.energy || 'medium');
   const [sleep, setSleep] = useState<SleepQuality>(editingEntry?.sleep || 'fair');
   const [notes, setNotes] = useState(editingEntry?.notes || '');
+  const [impactsDailyLife, setImpactsDailyLife] = useState<boolean | null>(editingEntry?.impactsDailyLife ?? null);
+  const [bleedingBetweenPeriods, setBleedingBetweenPeriods] = useState<boolean | null>(editingEntry?.bleedingBetweenPeriods ?? null);
+  const [clots, setClots] = useState<boolean | null>(editingEntry?.clots ?? null);
+  const [padChangeFrequency, setPadChangeFrequency] = useState<'normal' | '1-2hours' | null>(editingEntry?.padChangeFrequency ?? null);
 
   const toggleSymptom = (sym: string) => setSymptoms(s => s.includes(sym) ? s.filter(x => x !== sym) : [...s, sym]);
 
   const handleSave = () => {
     if (editingEntry) {
-      storage.updateSymptom(editingEntry.id, { date, symptoms, painLevel, mood, energy, sleep, notes: notes || undefined });
+      storage.updateSymptom(editingEntry.id, {
+        date, symptoms, painLevel, mood, energy, sleep,
+        notes: notes || undefined,
+        impactsDailyLife: impactsDailyLife ?? undefined,
+        bleedingBetweenPeriods: bleedingBetweenPeriods ?? undefined,
+        clots: clots ?? undefined,
+        padChangeFrequency: padChangeFrequency ?? undefined,
+      });
     } else {
       storage.addSymptom({
         id: crypto.randomUUID(), date, symptoms, painLevel, mood, energy, sleep,
-        notes: notes || undefined, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(),
+        notes: notes || undefined,
+        impactsDailyLife: impactsDailyLife ?? undefined,
+        bleedingBetweenPeriods: bleedingBetweenPeriods ?? undefined,
+        clots: clots ?? undefined,
+        padChangeFrequency: padChangeFrequency ?? undefined,
+        createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(),
       });
     }
     onSave();
@@ -182,11 +198,51 @@ function SymptomForm({ open, onClose, onSave, editingEntry }: {
           <label className="mb-1.5 block text-sm font-medium text-plum-600">{t('sympNotes')}</label>
           <textarea value={notes} onChange={e => setNotes(e.target.value)} className="input-field min-h-[60px] resize-none" placeholder="Optional notes..." />
         </div>
+
+        {/* Optional red-flag questions */}
+        <div className="rounded-xl bg-cream-50 p-4 space-y-3">
+          <p className="text-xs font-semibold text-plum-400">{t('sympRedFlagSection')}</p>
+          <YesNoQuestion label={t('sympImpactsDailyLife')} value={impactsDailyLife} onChange={setImpactsDailyLife} />
+          <YesNoQuestion label={t('sympBleedingBetween')} value={bleedingBetweenPeriods} onChange={setBleedingBetweenPeriods} />
+          <YesNoQuestion label={t('sympClots')} value={clots} onChange={setClots} />
+          <div>
+            <label className="mb-1.5 block text-sm text-plum-600">{t('sympPadChange')}</label>
+            <div className="flex gap-2">
+              <button type="button" onClick={() => setPadChangeFrequency('normal')}
+                className={`flex-1 rounded-lg border px-3 py-2 text-xs font-medium transition-all ${padChangeFrequency === 'normal' ? 'border-coral-300 bg-coral-50 text-coral-500' : 'border-cream-200 bg-white text-plum-500'}`}>
+                {t('sympPadChangeNormal')}
+              </button>
+              <button type="button" onClick={() => setPadChangeFrequency('1-2hours')}
+                className={`flex-1 rounded-lg border px-3 py-2 text-xs font-medium transition-all ${padChangeFrequency === '1-2hours' ? 'border-coral-300 bg-coral-50 text-coral-500' : 'border-cream-200 bg-white text-plum-500'}`}>
+                {t('sympPadChangeFrequent')}
+              </button>
+            </div>
+          </div>
+        </div>
         <div className="flex gap-3">
           <button onClick={onClose} className="btn-secondary flex-1">{t('sympCancel')}</button>
           <button onClick={handleSave} className="btn-primary flex-1">{t('sympSave')}</button>
         </div>
       </div>
     </Modal>
+  );
+}
+
+function YesNoQuestion({ label, value, onChange }: { label: string; value: boolean | null; onChange: (v: boolean | null) => void }) {
+  const { t } = useApp();
+  return (
+    <div>
+      <label className="mb-1.5 block text-sm text-plum-600">{label}</label>
+      <div className="flex gap-2">
+        <button type="button" onClick={() => onChange(value === true ? null : true)}
+          className={`flex-1 rounded-lg border px-3 py-2 text-xs font-medium transition-all ${value === true ? 'border-coral-300 bg-coral-50 text-coral-500' : 'border-cream-200 bg-white text-plum-500'}`}>
+          {t('sympYes')}
+        </button>
+        <button type="button" onClick={() => onChange(value === false ? null : false)}
+          className={`flex-1 rounded-lg border px-3 py-2 text-xs font-medium transition-all ${value === false ? 'border-coral-300 bg-coral-50 text-coral-500' : 'border-cream-200 bg-white text-plum-500'}`}>
+          {t('sympNo')}
+        </button>
+      </div>
+    </div>
   );
 }

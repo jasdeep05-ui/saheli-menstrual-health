@@ -100,6 +100,7 @@ export function getOnboarding(): OnboardingPrefs {
     trackingEnabled: true,
     privacyAcknowledged: false,
     remindersEnabled: false,
+    ageGroup: 'unknown',
   });
 }
 

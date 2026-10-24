@@ -6,13 +6,13 @@ import { Check, ChevronRight, ChevronLeft, Shield, Heart, BookOpen, LifeBuoy, Be
 import type { OnboardingPrefs } from '../types';
 import type { Lang } from '../lib/i18n';
 
-type Step = 'language' | 'purpose' | 'privacy' | 'interests' | 'tracking' | 'reminders';
+type Step = 'language' | 'purpose' | 'privacy' | 'interests' | 'age' | 'tracking' | 'reminders';
 
-const STEPS: Step[] = ['language', 'purpose', 'privacy', 'interests', 'tracking', 'reminders'];
+const STEPS: Step[] = ['language', 'purpose', 'privacy', 'interests', 'age', 'tracking', 'reminders'];
 
 export function Onboarding() {
   const navigate = useNavigate();
-  const { setOnboarding } = useApp();
+  const { setOnboarding, t } = useApp();
   const [stepIndex, setStepIndex] = useState(0);
   const [prefs, setPrefs] = useState<OnboardingPrefs>({
     completed: false,
@@ -21,6 +21,7 @@ export function Onboarding() {
     trackingEnabled: true,
     privacyAcknowledged: false,
     remindersEnabled: false,
+    ageGroup: 'unknown',
   });
 
   const step = STEPS[stepIndex];
@@ -166,6 +167,49 @@ export function Onboarding() {
                     {prefs.interests.includes(item.id) && <Check className="text-coral-400" size={18} />}
                   </button>
                 ))}
+              </div>
+            </StepContainer>
+          )}
+
+          {step === 'age' && (
+            <StepContainer title={t('onbAgeTitle')} icon={<Heart size={28} />}>
+              <p className="mb-4 text-sm text-plum-400">
+                {t('onbAgeDesc')}
+              </p>
+              <div className="space-y-2">
+                <button
+                  onClick={() => setPrefs(p => ({ ...p, ageGroup: 'minor' }))}
+                  className={`flex w-full items-center justify-between rounded-xl border p-4 transition-all ${
+                    prefs.ageGroup === 'minor'
+                      ? 'border-coral-300 bg-coral-50'
+                      : 'border-cream-200 bg-white hover:bg-cream-50'
+                  }`}
+                >
+                  <span className="text-sm font-medium text-plum-600">{t('onbAgeMinor')}</span>
+                  {prefs.ageGroup === 'minor' && <Check className="text-coral-400" size={18} />}
+                </button>
+                <button
+                  onClick={() => setPrefs(p => ({ ...p, ageGroup: 'adult' }))}
+                  className={`flex w-full items-center justify-between rounded-xl border p-4 transition-all ${
+                    prefs.ageGroup === 'adult'
+                      ? 'border-coral-300 bg-coral-50'
+                      : 'border-cream-200 bg-white hover:bg-cream-50'
+                  }`}
+                >
+                  <span className="text-sm font-medium text-plum-600">{t('onbAgeAdult')}</span>
+                  {prefs.ageGroup === 'adult' && <Check className="text-coral-400" size={18} />}
+                </button>
+                <button
+                  onClick={() => setPrefs(p => ({ ...p, ageGroup: 'unknown' }))}
+                  className={`flex w-full items-center justify-between rounded-xl border p-4 transition-all ${
+                    prefs.ageGroup === 'unknown'
+                      ? 'border-coral-300 bg-coral-50'
+                      : 'border-cream-200 bg-white hover:bg-cream-50'
+                  }`}
+                >
+                  <span className="text-sm font-medium text-plum-600">{t('onbAgePreferNot')}</span>
+                  {prefs.ageGroup === 'unknown' && <Check className="text-coral-400" size={18} />}
+                </button>
               </div>
             </StepContainer>
           )}

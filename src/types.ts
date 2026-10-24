@@ -21,6 +21,11 @@ export interface SymptomEntry {
   energy: EnergyLevel;
   sleep: SleepQuality;
   notes?: string;
+  // Optional red-flag fields — only set when the user explicitly answers
+  impactsDailyLife?: boolean; // pain stops daily activities
+  bleedingBetweenPeriods?: boolean; // bleeding between periods or after sex
+  clots?: boolean; // clots larger than a ₹10 coin
+  padChangeFrequency?: 'normal' | '1-2hours'; // changing pad every 1-2 hours
   createdAt: string;
   updatedAt: string;
 }
@@ -49,6 +54,7 @@ export interface OnboardingPrefs {
   trackingEnabled: boolean;
   privacyAcknowledged: boolean;
   remindersEnabled: boolean;
+  ageGroup?: 'minor' | 'adult' | 'unknown'; // optional, used for age-appropriate thresholds
 }
 
 export interface ReminderPrefs {
